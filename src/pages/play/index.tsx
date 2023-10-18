@@ -52,6 +52,7 @@ const PlayPage = () => {
 			clear()
 			setTimerIsRunning(false)
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentScore])
 
 	useEffect(() => {
