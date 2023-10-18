@@ -26,7 +26,8 @@ const PlayPage = () => {
 		"/audio/countdown.mp3"
 	)
 	const [playWrongAudio] = useSound("/audio/wrong.mp3")
-	const [playStopAudio] = useSound("/audio/stop.mp3", { volume: 1.5 })
+	const [playStopAudio] = useSound("/audio/stop.mp3", { volume: 3 })
+	const [playPointlessAudio] = useSound("/audio/pointless.mp3")
 
 	let intervalRef = useRef<NodeJS.Timer | number | null>(null)
 
@@ -68,7 +69,9 @@ const PlayPage = () => {
 	useEffect(() => {
 		if (currentScore === targetScore) {
 			stopCountdownAudio()
-			if (targetScore !== 0) {
+			if (targetScore === 0) {
+				playPointlessAudio()
+			} else {
 				playStopAudio()
 			}
 			clear()
