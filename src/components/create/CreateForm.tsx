@@ -130,9 +130,23 @@ export const CreateForm = () => {
 		updateMaxScore(qIndex, parseInt(newMaxScore, 10))
 	}
 
+	const formIsValid = () => {
+		const form = document.getElementById("questions")
+		const inputs = form?.querySelectorAll("input") || []
+
+		let isValid = true
+
+		inputs.forEach((input) => {
+			if (!input.checkValidity()) {
+				isValid = false
+			}
+		})
+		return isValid
+	}
+
 	return (
 		<Box py={5}>
-			<form>
+			<form id='questions'>
 				<label htmlFor='csvFile'>
 					<Button variant='outlined' component='span' sx={{ mb: 2 }}>
 						Importer spill
@@ -179,6 +193,11 @@ export const CreateForm = () => {
 											fullWidth
 											label={`Spørsmål ${qIndex + 1}`}
 											value={question}
+											inputProps={{
+												required: true,
+											}}
+											error={question === ""}
+											helperText={question === "" && "Kan ikke være tom"}
 											onChange={(e) => {
 												const newQuestion = e.target.value
 												handleQuestionChange(qIndex, newQuestion)
@@ -208,6 +227,11 @@ export const CreateForm = () => {
 														value={title}
 														sx={{ flex: 1 }}
 														autoFocus={oIndex === options.length - 1}
+														inputProps={{
+															required: true,
+														}}
+														error={title === ""}
+														helperText={title === "" && "Kan ikke være tomt"}
 														onChange={(e) => {
 															const newTitle = e.target.value
 															handleOptionChange(qIndex, oIndex, {
@@ -277,7 +301,12 @@ export const CreateForm = () => {
 						variant='contained'
 						color='success'
 						sx={{ ml: "auto" }}
-						onClick={() => router.push("/play")}
+						disabled={!formIsValid()}
+						onClick={() => {
+							if (formIsValid()) {
+								router.push("/play")
+							}
+						}}
 					>
 						Spill
 					</Button>
