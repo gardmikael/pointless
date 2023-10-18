@@ -131,6 +131,9 @@ export const CreateForm = () => {
 	}
 
 	const formIsValid = () => {
+		if (typeof window === "undefined") {
+			return
+		}
 		const form = document.getElementById("questions")
 		const inputs = form?.querySelectorAll("input") || []
 
