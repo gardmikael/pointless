@@ -1,8 +1,18 @@
 import { Option, useQuestionStore } from "@/QuestionStore"
 import { CenteredFlexBox } from "@/components/CenteredFlexBox"
-import { Box, Button, Stack, TextField, Typography } from "@mui/material"
+import {
+	Box,
+	Button,
+	IconButton,
+	Stack,
+	TextField,
+	Typography,
+} from "@mui/material"
 import { ChangeEvent, useEffect, useRef, useState } from "react"
+import RefreshIcon from "@mui/icons-material/Refresh"
+import useSound from "use-sound"
 
+const COUNT_DOWN_DURATION = 7000 // 7 seconds
 const PlayPage = () => {
 	const { questions } = useQuestionStore()
 	const [qIndex, setQIndex] = useState(0)
@@ -11,6 +21,12 @@ const PlayPage = () => {
 	const [timerIsRunning, setTimerIsRunning] = useState(false)
 	const [disableStartButton, setDisableStartButton] = useState(false)
 	const [targetScore, setTargetScore] = useState(0)
+	const [showReset, setShowReset] = useState(false)
+	const [playCountdownAudio, { stop: stopCountdownAudio }] = useSound(
+		"/audio/countdown.mp3"
+	)
+	const [playWrongAudio] = useSound("/audio/wrong.mp3")
+	const [playStopAudio] = useSound("/audio/stop.mp3", { volume: 1.5 })
 
 	let intervalRef = useRef<NodeJS.Timer | number | null>(null)
 
@@ -36,21 +52,28 @@ const PlayPage = () => {
 				startCountdown()
 			} else {
 				setCurrentScore(-1)
-				console.log("Wrong answer")
+				playWrongAudio()
+				setShowReset(true)
 			}
 		}, 3000)
 	}
 
 	const startCountdown = () => {
+		playCountdownAudio()
 		intervalRef.current = window.setInterval(() => {
 			decreaseScore()
-		}, 100)
+		}, COUNT_DOWN_DURATION / questions[qIndex].maxScore)
 	}
 
 	useEffect(() => {
 		if (currentScore === targetScore) {
+			stopCountdownAudio()
+			if (targetScore !== 0) {
+				playStopAudio()
+			}
 			clear()
 			setTimerIsRunning(false)
+			setShowReset(true)
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentScore])
@@ -75,6 +98,12 @@ const PlayPage = () => {
 		setAnswer(event.target.value)
 	}
 
+	useEffect(() => {
+		return () => {
+			clear()
+		}
+	}, [])
+
 	const Point = ({ isLast }: { isLast: boolean }) => (
 		<Box
 			className={`point ${isLast ? "last" : ""} ${
@@ -83,6 +112,7 @@ const PlayPage = () => {
 		/>
 	)
 	const handleReset = () => {
+		setShowReset(false)
 		setCurrentScore(questions[qIndex].maxScore)
 		setDisableStartButton(false)
 		setAnswer("")
@@ -92,10 +122,28 @@ const PlayPage = () => {
 		<CenteredFlexBox sx={{ width: "100%" }}>
 			{/* Score Box */}
 			<Box display='flex' flexDirection='column' alignItems='center'>
-				<Typography variant='h1'>
-					{currentScore === -1 ? "X" : currentScore}
-				</Typography>
-				<Typography variant='caption'>{questions[qIndex].question}</Typography>
+				<Box
+					sx={{
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						border: "2px solid",
+						p: 1,
+						borderRadius: "50%",
+						width: 200,
+						bgcolor: "#323541",
+					}}
+				>
+					<Typography
+						variant='h1'
+						sx={{
+							fontWeight: 700,
+							color: `${currentScore === -1 ? "red" : "yellow"}`,
+						}}
+					>
+						{currentScore === -1 ? "X" : currentScore}
+					</Typography>
+				</Box>
 			</Box>
 			<Stack direction='column-reverse' gap={0.25} height={500}>
 				{Array.from(
@@ -108,50 +156,67 @@ const PlayPage = () => {
 					)
 				)}
 			</Stack>
+			<Box>
+				<Typography variant='caption'>{questions[qIndex].question}</Typography>
+			</Box>
 			<Box
 				width='100%'
 				sx={{
-					p: 2,
-					display: "flex",
-					justifyContent: "space-around",
+					display: "grid",
+					gridTemplateColumns: "1fr 1fr 1fr",
 					alignItems: "center",
 				}}
 			>
-				<Button
-					variant='contained'
-					color='primary'
-					onClick={handlePreviousQuestion}
-					disabled={qIndex === 0}
-				>
-					Forrige spørsmål
-				</Button>
-				<Box display='flex' flexDirection='column'>
+				<Box display='flex' justifyContent={"center"}>
+					{qIndex !== 0 && (
+						<Button
+							variant='contained'
+							color='primary'
+							onClick={handlePreviousQuestion}
+							disabled={qIndex === 0}
+						>
+							Forrige spørsmål
+						</Button>
+					)}
+				</Box>
+
+				<Box display='flex' flexDirection='column' alignItems='center' gap={2}>
 					<TextField
 						onChange={handdleAnswerChange}
 						value={answer}
 						autoComplete='false'
 						autoFocus={true}
 						disabled={disableStartButton}
+						sx={{
+							caretColor: "transparent",
+						}}
 					/>
 					<Button
 						variant='contained'
 						onClick={handleStart}
 						disabled={disableStartButton}
+						sx={{ width: 100 }}
 					>
 						Start
 					</Button>
-					<Button variant='outlined' onClick={handleReset}>
-						Reset
-					</Button>
+					{showReset && (
+						<IconButton onClick={handleReset}>
+							<RefreshIcon />
+						</IconButton>
+					)}
 				</Box>
-				<Button
-					variant='contained'
-					color='primary'
-					onClick={handleNextQuestion}
-					disabled={qIndex === questions.length - 1}
-				>
-					Neste spørsmål
-				</Button>
+				<Box display='flex' justifyContent={"center"}>
+					{qIndex !== questions.length - 1 && (
+						<Button
+							variant='contained'
+							color='primary'
+							onClick={handleNextQuestion}
+							disabled={qIndex === questions.length - 1}
+						>
+							Neste spørsmål
+						</Button>
+					)}
+				</Box>
 			</Box>
 		</CenteredFlexBox>
 	)
