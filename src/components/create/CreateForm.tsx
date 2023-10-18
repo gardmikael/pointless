@@ -2,7 +2,7 @@ import { Option, Question, useQuestionStore } from "@/QuestionStore"
 import { Box, Stack, Button, TextField, Paper, IconButton } from "@mui/material"
 import { useRouter } from "next/router"
 import Papa from "papaparse"
-import { ChangeEvent, useMemo } from "react"
+import { ChangeEvent, useEffect, useMemo, useState } from "react"
 import DeleteIcon from "@mui/icons-material/Delete"
 import { getRandomQuestion } from "@/utils/misc"
 
@@ -19,6 +19,7 @@ export const CreateForm = () => {
 	} = useQuestionStore()
 
 	const router = useRouter()
+	const [form, setForm] = useState<HTMLElement | null>(null)
 
 	const handleAddQuestion = () => {
 		const { q, a } = getRandomQuestion()
@@ -131,10 +132,6 @@ export const CreateForm = () => {
 	}
 
 	const checkFormValidity = () => {
-		if (typeof window === "undefined") {
-			return
-		}
-		const form = document.getElementById("questions")
 		const inputs = form?.querySelectorAll("input") || []
 
 		let isValid = true
@@ -147,6 +144,12 @@ export const CreateForm = () => {
 		return isValid
 	}
 
+	useEffect(() => {
+		if (typeof window === "undefined") {
+			return
+		}
+		setForm(document.getElementById("questions"))
+	}, [])
 	const formIsValid = useMemo(() => {
 		return checkFormValidity()
 	}, [questions])
