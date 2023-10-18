@@ -28,7 +28,7 @@ export const CreateForm = () => {
 			options: [
 				{
 					title: a,
-					score: 100,
+					score: previousMaxScore,
 				},
 			],
 			maxScore: previousMaxScore,
@@ -36,7 +36,9 @@ export const CreateForm = () => {
 	}
 
 	const handleAddOption = (index: number) => {
-		addOption(index, { title: "Nytt svaralternativ", score: 100 })
+		const maxScore = questions[index].maxScore
+
+		addOption(index, { title: "Nytt svaralternativ", score: maxScore })
 	}
 
 	const handleQuestionChange = (qIndex: number, newQuestion: string) => {
@@ -219,13 +221,15 @@ export const CreateForm = () => {
 														label='Score'
 														value={score}
 														inputProps={{
-															max: 100,
+															max: questions[qIndex].maxScore,
 															min: 0,
 															type: "number",
 															step: 1,
 															pattern: "[0-9]*",
 														}}
-														error={score < 0 || score > 100}
+														error={
+															score < 0 || score > questions[qIndex].maxScore
+														}
 														onChange={(e) => {
 															const newScore = parseInt(e.target.value, 10)
 															if (!isNaN(newScore)) {
