@@ -2,7 +2,7 @@ import { Option, Question, useQuestionStore } from "@/QuestionStore"
 import { Box, Stack, Button, TextField, Paper, IconButton } from "@mui/material"
 import { useRouter } from "next/router"
 import Papa from "papaparse"
-import { ChangeEvent } from "react"
+import { ChangeEvent, useMemo } from "react"
 import DeleteIcon from "@mui/icons-material/Delete"
 import { getRandomQuestion } from "@/utils/misc"
 
@@ -130,7 +130,7 @@ export const CreateForm = () => {
 		updateMaxScore(qIndex, parseInt(newMaxScore, 10))
 	}
 
-	const formIsValid = () => {
+	const checkFormValidity = () => {
 		if (typeof window === "undefined") {
 			return
 		}
@@ -146,6 +146,10 @@ export const CreateForm = () => {
 		})
 		return isValid
 	}
+
+	const formIsValid = useMemo(() => {
+		return checkFormValidity()
+	}, [questions])
 
 	return (
 		<Box py={5}>
@@ -304,9 +308,9 @@ export const CreateForm = () => {
 						variant='contained'
 						color='success'
 						sx={{ ml: "auto" }}
-						disabled={!formIsValid()}
+						disabled={!formIsValid}
 						onClick={() => {
-							if (formIsValid()) {
+							if (formIsValid) {
 								router.push("/play")
 							}
 						}}
