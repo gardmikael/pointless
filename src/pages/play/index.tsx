@@ -26,7 +26,7 @@ const PlayPage = () => {
 		"/audio/countdown.mp3"
 	)
 	const [playWrongAudio] = useSound("/audio/wrong.mp3")
-	const [playStopAudio] = useSound("/audio/stop.mp3", { volume: 3 })
+	const [playStopAudio] = useSound("/audio/stop.mp3", { volume: 0.7 })
 	const [playPointlessAudio] = useSound("/audio/pointless.mp3")
 
 	let intervalRef = useRef<NodeJS.Timer | number | null>(null)
