@@ -22,7 +22,7 @@ html, body {
   
   .point {
 	width: 150px;
-	height: 5px;
+	height: 3px;
 	background-color: rgb(70, 70, 83); /* Set your desired background color */
 }
 

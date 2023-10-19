@@ -11,13 +11,15 @@ import {
 import { ChangeEvent, useEffect, useRef, useState } from "react"
 import RefreshIcon from "@mui/icons-material/Refresh"
 import useSound from "use-sound"
+import { useRouter } from "next/router"
 
 const COUNT_DOWN_DURATION = 6700 // 7 seconds
 const PlayPage = () => {
 	const { questions } = useQuestionStore()
 	const [qIndex, setQIndex] = useState(0)
 	const [answer, setAnswer] = useState("")
-	const [currentScore, setCurrentScore] = useState(questions[qIndex].maxScore)
+	const { question, maxScore } = questions[qIndex]
+	const [currentScore, setCurrentScore] = useState(maxScore)
 	const [timerIsRunning, setTimerIsRunning] = useState(false)
 	const [disableStartButton, setDisableStartButton] = useState(false)
 	const [targetScore, setTargetScore] = useState(0)
@@ -28,6 +30,7 @@ const PlayPage = () => {
 	const [playWrongAudio] = useSound("/audio/wrong.mp3")
 	const [playStopAudio] = useSound("/audio/stop.mp3", { volume: 0.7 })
 	const [playPointlessAudio] = useSound("/audio/pointless.mp3")
+	const router = useRouter()
 
 	let intervalRef = useRef<NodeJS.Timer | number | null>(null)
 
@@ -63,7 +66,7 @@ const PlayPage = () => {
 		playCountdownAudio()
 		intervalRef.current = window.setInterval(() => {
 			decreaseScore()
-		}, COUNT_DOWN_DURATION / questions[qIndex].maxScore)
+		}, COUNT_DOWN_DURATION / maxScore)
 	}
 
 	useEffect(() => {
@@ -82,8 +85,8 @@ const PlayPage = () => {
 	}, [currentScore])
 
 	useEffect(() => {
-		setCurrentScore(questions[qIndex].maxScore)
-	}, [qIndex, questions])
+		setCurrentScore(maxScore)
+	}, [maxScore])
 
 	const handleNextQuestion = () => {
 		if (qIndex < questions.length - 1) {
@@ -116,14 +119,20 @@ const PlayPage = () => {
 	)
 	const handleReset = () => {
 		setShowReset(false)
-		setCurrentScore(questions[qIndex].maxScore)
+		setCurrentScore(maxScore)
 		setDisableStartButton(false)
 		setAnswer("")
 	}
 
 	return (
-		<CenteredFlexBox sx={{ width: "100%" }}>
-			{/* Score Box */}
+		<CenteredFlexBox sx={{ p: 2, width: "100%" }}>
+			<Button
+				variant='outlined'
+				sx={{ alignSelf: "flex-start" }}
+				onClick={() => router.push("/")}
+			>
+				Tilbake til spørsmål
+			</Button>
 			<Box display='flex' flexDirection='column' alignItems='center'>
 				<Box
 					sx={{
@@ -155,8 +164,7 @@ const PlayPage = () => {
 			<Stack direction='column-reverse' gap={0.25} height={500}>
 				{Array.from(
 					{
-						length:
-							currentScore === -1 ? questions[qIndex].maxScore : currentScore,
+						length: currentScore === -1 ? maxScore : currentScore,
 					},
 					(_, i) => (
 						<Point key={i} isLast={i === currentScore - 1} />
@@ -164,7 +172,7 @@ const PlayPage = () => {
 				)}
 			</Stack>
 			<Box>
-				<Typography variant='caption'>{questions[qIndex].question}</Typography>
+				<Typography variant='caption'>{question}</Typography>
 			</Box>
 			<Box
 				width='100%'
