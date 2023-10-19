@@ -1,8 +1,8 @@
-import { Option, Question, useQuestionStore } from "@/QuestionStore"
+import { Option, useQuestionStore } from "@/QuestionStore"
 import { Box, Stack, Button, TextField, Paper, IconButton } from "@mui/material"
 import { useRouter } from "next/router"
 import Papa from "papaparse"
-import { ChangeEvent, useEffect, useMemo, useState } from "react"
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react"
 import DeleteIcon from "@mui/icons-material/Delete"
 import { getRandomQuestion } from "@/utils/misc"
 
@@ -39,7 +39,7 @@ export const CreateForm = () => {
 	const handleAddOption = (index: number) => {
 		const maxScore = questions[index].maxScore
 
-		addOption(index, { title: "Nytt svaralternativ", score: maxScore })
+		addOption(index, { title: "", score: maxScore })
 	}
 
 	const handleQuestionChange = (qIndex: number, newQuestion: string) => {
@@ -127,11 +127,11 @@ export const CreateForm = () => {
 			reader.readAsText(file)
 		}
 	}
-	const handleMaxScoreChange = (qIndex: number, newMaxScore: any) => {
-		updateMaxScore(qIndex, parseInt(newMaxScore, 10))
+	const handleMaxScoreChange = (qIndex: number, newMaxScore: number) => {
+		updateMaxScore(qIndex, newMaxScore)
 	}
 
-	const checkFormValidity = () => {
+	const checkFormValidity = useCallback(() => {
 		const inputs = form?.querySelectorAll("input") || []
 
 		let isValid = true
@@ -141,8 +141,23 @@ export const CreateForm = () => {
 				isValid = false
 			}
 		})
+
+		questions.forEach(({ maxScore, options }) => {
+			const highestOptionScore = Math.max(
+				...options.map((option) => option.score)
+			)
+			if (maxScore < highestOptionScore) {
+				isValid = false
+			}
+		})
+
 		return isValid
-	}
+	}, [questions, form])
+
+	const formIsValid = useMemo(() => {
+		const isValid = checkFormValidity()
+		return isValid
+	}, [checkFormValidity])
 
 	useEffect(() => {
 		if (typeof window === "undefined") {
@@ -150,9 +165,6 @@ export const CreateForm = () => {
 		}
 		setForm(document.getElementById("questions"))
 	}, [])
-	const formIsValid = useMemo(() => {
-		return checkFormValidity()
-	}, [questions])
 
 	return (
 		<Box py={5}>
@@ -216,9 +228,26 @@ export const CreateForm = () => {
 										<TextField
 											label='Max score'
 											value={maxScore}
-											onChange={(e) =>
-												handleMaxScoreChange(qIndex, e.target.value)
+											inputProps={{
+												max: 100,
+												min: Math.max(
+													...questions[qIndex].options.map(({ score }) => score)
+												),
+												step: 1,
+												pattern: "[0-9]*",
+											}}
+											error={
+												maxScore <
+													Math.max(
+														...questions[qIndex].options.map(
+															({ score }) => score
+														)
+													) || maxScore > 100
 											}
+											onChange={(e) => {
+												const newMaxScore = parseInt(e.target.value || "0", 10)
+												handleMaxScoreChange(qIndex, newMaxScore)
+											}}
 										/>
 									</Box>
 									{options.map(({ title, score }, oIndex) => {
@@ -257,15 +286,16 @@ export const CreateForm = () => {
 														inputProps={{
 															max: questions[qIndex].maxScore,
 															min: 0,
-															type: "number",
-															step: 1,
 															pattern: "[0-9]*",
 														}}
 														error={
 															score < 0 || score > questions[qIndex].maxScore
 														}
 														onChange={(e) => {
-															const newScore = parseInt(e.target.value, 10)
+															const newScore = parseInt(
+																e.target.value || "0",
+																10
+															)
 															if (!isNaN(newScore)) {
 																handleOptionChange(qIndex, oIndex, {
 																	title,

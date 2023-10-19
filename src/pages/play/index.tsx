@@ -12,7 +12,7 @@ import { ChangeEvent, useEffect, useRef, useState } from "react"
 import RefreshIcon from "@mui/icons-material/Refresh"
 import useSound from "use-sound"
 
-const COUNT_DOWN_DURATION = 7000 // 7 seconds
+const COUNT_DOWN_DURATION = 6700 // 7 seconds
 const PlayPage = () => {
 	const { questions } = useQuestionStore()
 	const [qIndex, setQIndex] = useState(0)
@@ -68,10 +68,10 @@ const PlayPage = () => {
 
 	useEffect(() => {
 		if (currentScore === targetScore) {
-			stopCountdownAudio()
 			if (targetScore === 0) {
 				playPointlessAudio()
 			} else {
+				stopCountdownAudio()
 				playStopAudio()
 			}
 			clear()
@@ -138,13 +138,17 @@ const PlayPage = () => {
 					}}
 				>
 					<Typography
-						variant='h1'
+						variant='h2'
 						sx={{
 							fontWeight: 700,
 							color: `${currentScore === -1 ? "red" : "yellow"}`,
 						}}
 					>
-						{currentScore === -1 ? "X" : currentScore}
+						{currentScore === -1
+							? "X"
+							: currentScore === 0
+							? "POINTLESS"
+							: currentScore}
 					</Typography>
 				</Box>
 			</Box>

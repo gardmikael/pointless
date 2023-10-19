@@ -42,9 +42,7 @@ export const useQuestionStore = create<State>((set) => ({
 		set((state) => {
 			const questions = [...state.questions]
 			questions[questionIndex].options.push(option)
-			return {
-				questions,
-			}
+			return { questions }
 		}),
 	updateQuestion: (questionIndex: number, question: string) =>
 		set((state) => {
@@ -56,32 +54,24 @@ export const useQuestionStore = create<State>((set) => ({
 		set((state) => {
 			const questions = [...state.questions]
 			questions[questionIndex].options[optionIndex] = option
-			return {
-				questions,
-			}
+			return { questions }
 		}),
 	removeOption: (questionIndex: number, optionIndex: number) =>
 		set((state) => {
 			const questions = [...state.questions]
 			questions[questionIndex].options.splice(optionIndex, 1)
-			return {
-				questions,
-			}
+			return { questions }
 		}),
 	removeQuestion: (questionIndex: number) =>
 		set((state) => {
 			const questions = [...state.questions]
 			questions.splice(questionIndex, 1)
-			return {
-				questions,
-			}
+			return { questions }
 		}),
 	updateMaxScore: (questionIndex: number, maxScore: number) =>
 		set((state) => {
 			const questions = [...state.questions]
 			questions[questionIndex].maxScore = maxScore
-			return {
-				questions,
-			}
+			return { questions }
 		}),
 }))
