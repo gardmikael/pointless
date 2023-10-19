@@ -198,19 +198,21 @@ const PlayPage = () => {
 							caretColor: "transparent",
 						}}
 					/>
-					<Button
-						variant='contained'
-						onClick={handleStart}
-						disabled={disableStartButton}
-						sx={{ width: 100 }}
-					>
-						Start
-					</Button>
-					{showReset && (
-						<IconButton onClick={handleReset}>
-							<RefreshIcon />
-						</IconButton>
-					)}
+					<Box>
+						<Button
+							variant='contained'
+							onClick={handleStart}
+							disabled={disableStartButton}
+							sx={{ width: 100 }}
+						>
+							Start
+						</Button>
+						{showReset && (
+							<IconButton onClick={handleReset}>
+								<RefreshIcon />
+							</IconButton>
+						)}
+					</Box>
 				</Box>
 				<Box display='flex' justifyContent={"center"}>
 					{qIndex !== questions.length - 1 && (
