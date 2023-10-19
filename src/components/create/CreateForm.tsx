@@ -256,7 +256,7 @@ export const CreateForm = () => {
 											<Stack key={`q_${qIndex}_option_${oIndex}`} spacing={2}>
 												<Box
 													display='flex'
-													alignItems='center'
+													alignItems='flex-start'
 													gap={2}
 													sx={{ ml: 2 }}
 												>
