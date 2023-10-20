@@ -131,117 +131,126 @@ const PlayPage = () => {
 	}
 
 	return (
-		<CenteredFlexBox sx={{ p: 2, width: "100%" }}>
+		<>
 			<Button
 				variant='outlined'
-				sx={{ alignSelf: "flex-start" }}
+				size='small'
+				sx={{ m: 3, alignSelf: "flex-start" }}
 				onClick={() => router.push("/")}
 			>
 				Tilbake til spørsmål
 			</Button>
-			<Box display='flex' flexDirection='column' alignItems='center'>
-				<Box
-					sx={{
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						border: "2px solid",
-						p: 1,
-						borderRadius: "50%",
-						width: 200,
-						bgcolor: "#323541",
-					}}
-				>
-					<Typography
-						variant='h2'
+
+			<CenteredFlexBox sx={{ p: 2, width: "100%" }}>
+				<Box display='flex' flexDirection='column' alignItems='center'>
+					<Box
 						sx={{
-							fontWeight: 700,
-							color: `${currentScore === -1 ? "red" : "yellow"}`,
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "center",
+							border: "2px solid",
+							p: 1,
+							borderRadius: "50%",
+							width: 200,
+							bgcolor: "#323541",
 						}}
 					>
-						{currentScore === -1
-							? "X"
-							: currentScore === 0
-							? "POINTLESS"
-							: currentScore}
-					</Typography>
-				</Box>
-			</Box>
-			<Stack direction='column-reverse' gap={0.25} height={500}>
-				{Array.from(
-					{
-						length: currentScore === -1 ? maxScore! : currentScore,
-					},
-					(_, i) => (
-						<Point key={i} isLast={i === currentScore - 1} />
-					)
-				)}
-			</Stack>
-			<Box>
-				<Typography variant='caption'>{question}</Typography>
-			</Box>
-			<Box
-				width='100%'
-				sx={{
-					display: "grid",
-					gridTemplateColumns: "1fr 1fr 1fr",
-					alignItems: "center",
-				}}
-			>
-				<Box display='flex' justifyContent={"center"}>
-					{qIndex !== 0 && (
-						<Button
-							variant='contained'
-							color='primary'
-							onClick={handlePreviousQuestion}
-							disabled={qIndex === 0}
+						<Typography
+							variant='h2'
+							sx={{
+								fontWeight: 700,
+								color: `${currentScore === -1 ? "red" : "yellow"}`,
+							}}
 						>
-							Forrige spørsmål
-						</Button>
+							{currentScore === -1
+								? "X"
+								: currentScore === 0
+								? "POINTLESS"
+								: currentScore}
+						</Typography>
+					</Box>
+				</Box>
+				<Stack direction='column-reverse' gap={0.25} height={500}>
+					{Array.from(
+						{
+							length: currentScore === -1 ? maxScore! : currentScore,
+						},
+						(_, i) => (
+							<Point key={i} isLast={i === currentScore - 1} />
+						)
 					)}
+				</Stack>
+				<Box>
+					<Typography variant='caption'>{question}</Typography>
 				</Box>
+				<Box
+					width='100%'
+					sx={{
+						display: "grid",
+						gridTemplateColumns: "1fr 1fr 1fr",
+						alignItems: "center",
+					}}
+				>
+					<Box display='flex' justifyContent={"center"}>
+						{qIndex !== 0 && (
+							<Button
+								variant='contained'
+								color='primary'
+								onClick={handlePreviousQuestion}
+								disabled={qIndex === 0}
+							>
+								Forrige spørsmål
+							</Button>
+						)}
+					</Box>
 
-				<Box display='flex' flexDirection='column' alignItems='center' gap={2}>
-					<TextField
-						onChange={handdleAnswerChange}
-						value={answer}
-						autoComplete='false'
-						autoFocus={true}
-						disabled={disableStartButton}
-						sx={{
-							caretColor: "transparent",
-						}}
-					/>
-					<Box>
-						<Button
-							variant='contained'
-							onClick={handleStart}
+					<Box
+						display='flex'
+						flexDirection='column'
+						alignItems='center'
+						gap={2}
+					>
+						<TextField
+							onChange={handdleAnswerChange}
+							value={answer}
+							autoComplete='false'
+							autoFocus={true}
 							disabled={disableStartButton}
-							sx={{ width: 100 }}
-						>
-							Start
-						</Button>
-						{showReset && (
-							<IconButton onClick={handleReset}>
-								<RefreshIcon />
-							</IconButton>
+							sx={{
+								caretColor: "transparent",
+							}}
+						/>
+						<Box>
+							<Button
+								variant='contained'
+								onClick={handleStart}
+								disabled={disableStartButton}
+								sx={{ width: 100 }}
+							>
+								Start
+							</Button>
+							{showReset && (
+								<IconButton onClick={handleReset}>
+									<RefreshIcon />
+								</IconButton>
+							)}
+						</Box>
+					</Box>
+					<Box display='flex' justifyContent={"center"}>
+						{qIndex !== questions.length - 1 && (
+							<Button
+								variant='contained'
+								color='primary'
+								onClick={handleNextQuestion}
+								disabled={qIndex === questions.length - 1}
+							>
+								Neste spørsmål
+							</Button>
 						)}
 					</Box>
 				</Box>
-				<Box display='flex' justifyContent={"center"}>
-					{qIndex !== questions.length - 1 && (
-						<Button
-							variant='contained'
-							color='primary'
-							onClick={handleNextQuestion}
-							disabled={qIndex === questions.length - 1}
-						>
-							Neste spørsmål
-						</Button>
-					)}
-				</Box>
-			</Box>
-		</CenteredFlexBox>
+			</CenteredFlexBox>
+		</>
 	)
 }
 
