@@ -296,6 +296,7 @@ export const CreateForm = () => {
 													<IconButton
 														onClick={() => handleRemoveOption(qIndex, oIndex)}
 														disabled={disabled}
+														tabIndex={-1}
 													>
 														<DeleteIcon
 															color={`${disabled ? "disabled" : "error"}`}
