@@ -308,6 +308,7 @@ export const CreateForm = () => {
 									<Button
 										variant='outlined'
 										onClick={() => handleAddOption(qIndex)}
+										disabled={!formIsValid}
 									>
 										Legg til nytt svaralternativ
 									</Button>
@@ -317,7 +318,11 @@ export const CreateForm = () => {
 					)
 				})}
 				<Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-					<Button variant='contained' onClick={handleAddQuestion}>
+					<Button
+						variant='contained'
+						onClick={handleAddQuestion}
+						disabled={!formIsValid}
+					>
 						Legg til nytt spørsmål
 					</Button>
 
