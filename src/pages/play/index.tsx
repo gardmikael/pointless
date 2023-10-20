@@ -19,7 +19,7 @@ const PlayPage = () => {
 	const [qIndex, setQIndex] = useState(0)
 	const [answer, setAnswer] = useState("")
 	const { question, maxScore } = questions[qIndex]
-	const [currentScore, setCurrentScore] = useState(maxScore)
+	const [currentScore, setCurrentScore] = useState(maxScore!)
 	const [timerIsRunning, setTimerIsRunning] = useState(false)
 	const [disableStartButton, setDisableStartButton] = useState(false)
 	const [targetScore, setTargetScore] = useState(0)
@@ -38,7 +38,7 @@ const PlayPage = () => {
 		window.clearInterval(intervalRef.current as number)
 	}
 
-	const decreaseScore = () => setCurrentScore((prev) => prev - 1)
+	const decreaseScore = () => setCurrentScore((prev) => prev! - 1)
 	const handleStart = () => {
 		if (timerIsRunning) {
 			return
@@ -51,7 +51,7 @@ const PlayPage = () => {
 
 		setTimeout(() => {
 			if (pointless || correctAnswer) {
-				const targetScore = pointless ? 0 : (correctAnswer as Option).score
+				const targetScore = pointless ? 0 : (correctAnswer as Option).score!
 				setTargetScore(targetScore)
 				setTimerIsRunning(true)
 				startCountdown(targetScore)
@@ -72,7 +72,7 @@ const PlayPage = () => {
 		playCountdownAudio()
 		intervalRef.current = window.setInterval(() => {
 			decreaseScore()
-		}, COUNT_DOWN_DURATION / maxScore)
+		}, COUNT_DOWN_DURATION / maxScore!)
 	}
 
 	useEffect(() => {
@@ -91,7 +91,7 @@ const PlayPage = () => {
 	}, [currentScore])
 
 	useEffect(() => {
-		setCurrentScore(maxScore)
+		setCurrentScore(maxScore!)
 	}, [maxScore])
 
 	const handleNextQuestion = () => {
@@ -125,7 +125,7 @@ const PlayPage = () => {
 	)
 	const handleReset = () => {
 		setShowReset(false)
-		setCurrentScore(maxScore)
+		setCurrentScore(maxScore!)
 		setDisableStartButton(false)
 		setAnswer("")
 	}
@@ -170,7 +170,7 @@ const PlayPage = () => {
 			<Stack direction='column-reverse' gap={0.25} height={500}>
 				{Array.from(
 					{
-						length: currentScore === -1 ? maxScore : currentScore,
+						length: currentScore === -1 ? maxScore! : currentScore,
 					},
 					(_, i) => (
 						<Point key={i} isLast={i === currentScore - 1} />

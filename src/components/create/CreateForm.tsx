@@ -24,7 +24,7 @@ export const CreateForm = () => {
 
 	const handleAddQuestion = () => {
 		const { q, a } = getRandomQuestion()
-		const previousMaxScore = questions[questions.length - 1].maxScore
+		const previousMaxScore = questions[questions.length - 1].maxScore!
 		addQuestion({
 			question: q,
 			options: [
@@ -128,7 +128,7 @@ export const CreateForm = () => {
 			reader.readAsText(file)
 		}
 	}
-	const handleMaxScoreChange = (qIndex: number, newMaxScore: number) => {
+	const handleMaxScoreChange = (qIndex: number, newMaxScore: number | null) => {
 		updateMaxScore(qIndex, newMaxScore)
 	}
 
@@ -172,7 +172,7 @@ export const CreateForm = () => {
 				{questions.map(({ question, options, maxScore }, qIndex) => {
 					const qDisabled = questions.length === 1
 					const minScore = Math.max(
-						...questions[qIndex].options.map(({ score }) => score)
+						...questions[qIndex].options.map(({ score }) => score || 0)
 					)
 					const qId = `q${qIndex}`
 					const qmsId = `qms${qIndex}`
@@ -187,14 +187,7 @@ export const CreateForm = () => {
 										sx={{ position: "absolute", top: "-10px", right: "-10px" }}
 									>
 										<IconButton
-											sx={{
-												bgcolor: "white",
-												"&:hover": {
-													bgcolor: "white",
-													transform: "scale(1.2)",
-													transition: "transform 0.2s ease-in-out",
-												},
-											}}
+											className='delete-btn'
 											onClick={(e) => handleRemoveQuestion(qIndex)}
 										>
 											<DeleteIcon color='error' />
@@ -214,26 +207,25 @@ export const CreateForm = () => {
 											}}
 											error={hasError(qId)}
 											helperText={hasError(qId) && "Kan ikke være tom"}
-											onChange={(e) => {
-												const newQuestion = e.target.value
-												handleQuestionChange(qIndex, newQuestion)
-											}}
+											onChange={({ target: { value } }) =>
+												handleQuestionChange(qIndex, value)
+											}
 										/>
 										<TextField
 											label='Max score'
-											value={maxScore}
+											value={maxScore || ""}
 											id={qmsId}
 											sx={{ minWidth: 100 }}
 											inputProps={{
 												type: "number",
 												max: 100,
 												min: minScore,
+												required: true,
 												step: 1,
-												pattern: "[0-9]*",
 											}}
 											error={hasError(qmsId)}
-											onChange={(e) => {
-												const newMaxScore = parseInt(e.target.value || "0", 10)
+											onChange={({ target: { value } }) => {
+												const newMaxScore = parseInt(value) || null
 												handleMaxScoreChange(qIndex, newMaxScore)
 											}}
 										/>
@@ -263,10 +255,9 @@ export const CreateForm = () => {
 														}}
 														error={hasError(otid)}
 														helperText={hasError(otid) && "Kan ikke være tom."}
-														onChange={(e) => {
-															const newTitle = e.target.value
+														onChange={({ target: { value } }) => {
 															handleOptionChange(qIndex, oIndex, {
-																title: newTitle,
+																title: value,
 																score,
 															})
 														}}
@@ -275,21 +266,21 @@ export const CreateForm = () => {
 														id={oid}
 														size='small'
 														label='Score'
-														value={score}
+														value={score || ""}
 														inputProps={{
+															type: "number",
+															required: true,
 															max: maxScore,
 															min: 0,
-															pattern: "[0-9]*",
 														}}
 														error={hasError(oid)}
-														onChange={(e) => {
-															const newScore = parseInt(e.target.value || "0")
-															if (!isNaN(newScore)) {
-																handleOptionChange(qIndex, oIndex, {
-																	title,
-																	score: newScore,
-																})
-															}
+														sx={{ width: 80 }}
+														onChange={({ target: { value } }) => {
+															const newScore = parseInt(value) || null
+															handleOptionChange(qIndex, oIndex, {
+																title,
+																score: newScore,
+															})
 														}}
 													/>
 

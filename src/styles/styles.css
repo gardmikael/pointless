@@ -30,3 +30,13 @@ html, body {
 	background: linear-gradient(to right, #ff00b8 0%, #ffa2e0 50%, #ff00b8 100%);
 	animation: scaleDown 0.25s ease-out; 
 }
+
+.delete-btn {
+	background-color: #fff;
+
+	&:hover {
+		background-color: #fff;
+		transform: scale(1.2);
+		transition: transform 0.2s ease-in-out;
+	}
+}

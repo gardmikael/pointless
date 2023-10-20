@@ -2,13 +2,13 @@ import { create } from "zustand"
 
 export type Option = {
 	title: string
-	score: number
+	score: number | null
 }
 
 export type Question = {
 	question: string
 	options: Option[]
-	maxScore: number
+	maxScore: number | null
 }
 
 type State = {
@@ -23,7 +23,7 @@ type State = {
 	) => void
 	removeOption: (questionIndex: number, optionIndex: number) => void
 	removeQuestion: (questionIndex: number) => void
-	updateMaxScore: (questionIndex: number, maxScore: number) => void
+	updateMaxScore: (questionIndex: number, maxScore: number | null) => void
 }
 
 export const useQuestionStore = create<State>((set) => ({
@@ -68,7 +68,7 @@ export const useQuestionStore = create<State>((set) => ({
 			questions.splice(questionIndex, 1)
 			return { questions }
 		}),
-	updateMaxScore: (questionIndex: number, maxScore: number) =>
+	updateMaxScore: (questionIndex: number, maxScore: number | null) =>
 		set((state) => {
 			const questions = [...state.questions]
 			questions[questionIndex].maxScore = maxScore
