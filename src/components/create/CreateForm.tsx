@@ -178,7 +178,7 @@ export const CreateForm = () => {
 				{questions.map(({ question, options, maxScore }, qIndex) => {
 					const qDisabled = questions.length === 1
 					const minScore = Math.max(
-						...questions[qIndex].options.map(({ score }) => score || 0)
+						...questions[qIndex].options.map(({ score }) => score || 3)
 					)
 					const qId = `q${qIndex}`
 					const qmsId = `qms${qIndex}`
@@ -222,7 +222,7 @@ export const CreateForm = () => {
 										/>
 										<TextField
 											label='Max score'
-											value={maxScore || ""}
+											value={maxScore !== null ? maxScore : ""}
 											id={qmsId}
 											sx={{ minWidth: 100 }}
 											inputProps={{
@@ -233,9 +233,13 @@ export const CreateForm = () => {
 												step: 1,
 											}}
 											error={hasError(qmsId)}
-											onChange={({ target: { value } }) =>
-												handleMaxScoreChange(qIndex, parseInt(value) || null)
-											}
+											onChange={({ target: { value } }) => {
+												const newScore = parseInt(value)
+												handleMaxScoreChange(
+													qIndex,
+													isNaN(newScore) ? null : newScore
+												)
+											}}
 										/>
 									</Box>
 									{options.map(({ title, score }, oIndex) => {
@@ -285,10 +289,10 @@ export const CreateForm = () => {
 														error={hasError(oid)}
 														sx={{ width: 80 }}
 														onChange={({ target: { value } }) => {
-															const newScore = parseInt(value) || null
+															const newScore = parseInt(value)
 															handleOptionChange(qIndex, oIndex, {
 																title,
-																score: newScore,
+																score: isNaN(newScore) ? null : newScore,
 															})
 														}}
 													/>
