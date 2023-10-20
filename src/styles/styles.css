@@ -23,7 +23,7 @@ html, body {
   .point {
 	width: 150px;
 	height: 3px;
-	background-color: rgb(70, 70, 83);
+	background-color: rgb(159 159 181);
 	&.last.active {
 		background: linear-gradient(to right, #ff00b8 0%, #ffa2e0 50%, #ff00b8 100%);
 		animation: scaleDown 0.25s ease-out; 
@@ -39,3 +39,52 @@ html, body {
 		transition: transform 0.2s ease-in-out;
 	}
 }
+
+.outer-container {
+    background: linear-gradient(271deg, #f0859d, #e50c54);
+    background-size: 400% 400%;
+	border-radius: 5px;
+	padding: 3rem;
+    -webkit-animation: outer-container 50s ease infinite;
+    -moz-animation: outer-container 50s ease infinite;
+    animation: outer-container 50s ease infinite;
+	box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+@keyframes outer-container {
+    0%{background-position:51% 0%}
+    50%{background-position:50% 100%}
+    100%{background-position:51% 0%}
+}
+
+
+.inner-container {
+    background: linear-gradient(0deg, #11125d, #1716df);
+    background-size: 400% 400%;
+	padding: .5rem;
+    -webkit-animation: inner-container 11s ease infinite;
+    -moz-animation: inner-container 11s ease infinite;
+    animation: inner-container 11s ease infinite;
+}
+
+@keyframes inner-container {
+    0%{background-position:50% 0%}
+    50%{background-position:51% 100%}
+    100%{background-position:50% 0%}
+}
+
+
+.glow {
+	color: #fff;
+	text-align: center;
+	animation: glow 3s ease-in-out infinite alternate;
+}
+  
+@keyframes glow {
+	from {
+	  text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #e6ad00, 0 0 20px #e66f00, 0 0 25px #e6b000, 0 0 30px #e6ad00, 0 0 35px #e6cb00;
+	}
+	to {
+	  text-shadow: 0 0 10px #fff, 0 0 15px #fcff4d, 0 0 20px #ffe14d, 0 0 25px #ffe74d, 0 0 30px #ffdb4d, 0 0 35px #ffd54d, 0 0 40px #ffd54d;
+	}
+  }

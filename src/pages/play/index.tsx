@@ -143,43 +143,57 @@ const PlayPage = () => {
 
 			<CenteredFlexBox sx={{ p: 2, width: "100%" }}>
 				<Box display='flex' flexDirection='column' alignItems='center'>
-					<Box
-						sx={{
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center",
-							border: "2px solid",
-							p: 1,
-							borderRadius: "50%",
-							width: 200,
-							bgcolor: "#323541",
-						}}
-					>
-						<Typography
-							variant='h2'
-							sx={{
-								fontWeight: 700,
-								color: `${currentScore === -1 ? "red" : "yellow"}`,
-							}}
+					<Box className='outer-container'>
+						<Box
+							className='inner-container'
+							sx={{ border: "3px solid", mx: 2 }}
 						>
-							{currentScore === -1
-								? "X"
-								: currentScore === 0
-								? "POINTLESS"
-								: currentScore}
-						</Typography>
+							<Box
+								sx={{
+									display: "flex",
+									alignItems: "center",
+									justifyContent: "center",
+									border: "2px solid",
+									p: 1,
+									borderRadius: "50%",
+									width: 200,
+									bgcolor: "#323541",
+									m: 1,
+								}}
+							>
+								<Typography
+									variant='h2'
+									sx={{
+										fontWeight: 700,
+										color: `${currentScore === -1 ? "red" : "yellow"}`,
+									}}
+									className={currentScore === 0 ? "glow" : ""}
+								>
+									{currentScore === -1
+										? "X"
+										: currentScore === 0
+										? "POINTLESS"
+										: currentScore}
+								</Typography>
+							</Box>
+							<Stack
+								direction='column-reverse'
+								gap={0.25}
+								height={500}
+								sx={{ mx: 1, alignItems: "center" }}
+							>
+								{Array.from(
+									{
+										length: currentScore === -1 ? maxScore! : currentScore,
+									},
+									(_, i) => (
+										<Point key={i} isLast={i === currentScore - 1} />
+									)
+								)}
+							</Stack>
+						</Box>
 					</Box>
 				</Box>
-				<Stack direction='column-reverse' gap={0.25} height={500}>
-					{Array.from(
-						{
-							length: currentScore === -1 ? maxScore! : currentScore,
-						},
-						(_, i) => (
-							<Point key={i} isLast={i === currentScore - 1} />
-						)
-					)}
-				</Stack>
 				<Box>
 					<Typography variant='caption'>{question}</Typography>
 				</Box>
