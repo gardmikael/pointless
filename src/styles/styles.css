@@ -23,12 +23,11 @@ html, body {
   .point {
 	width: 150px;
 	height: 3px;
-	background-color: rgb(70, 70, 83); /* Set your desired background color */
-}
-
-.point.last.active{
-	background: linear-gradient(to right, #ff00b8 0%, #ffa2e0 50%, #ff00b8 100%);
-	animation: scaleDown 0.25s ease-out; 
+	background-color: rgb(70, 70, 83);
+	.last.active {
+		background: linear-gradient(to right, #ff00b8 0%, #ffa2e0 50%, #ff00b8 100%);
+		animation: scaleDown 0.25s ease-out; 
+	}
 }
 
 .delete-btn {

@@ -21,7 +21,7 @@ export const CreateForm = () => {
 	const router = useRouter()
 	const [formIsValid, setFormIsValid] = useState(true)
 	const formRef = useRef<HTMLFormElement | null>(null)
-
+	const inputRef = useRef<HTMLInputElement | null>(null)
 	const handleAddQuestion = () => {
 		const { q, a } = getRandomQuestion()
 		const previousMaxScore = questions[questions.length - 1].maxScore!
@@ -38,9 +38,8 @@ export const CreateForm = () => {
 	}
 
 	const handleAddOption = (index: number) => {
-		const maxScore = questions[index].maxScore
-
-		addOption(index, { title: "", score: maxScore })
+		const maxScore = questions[index].maxScore!
+		addOption(index, { title: "Nytt svaralternativ", score: maxScore })
 	}
 
 	const handleQuestionChange = (qIndex: number, newQuestion: string) => {
@@ -149,6 +148,13 @@ export const CreateForm = () => {
 		checkFormValidity()
 	}, [questions])
 
+	useEffect(() => {
+		if (inputRef.current) {
+			inputRef.current.focus()
+			inputRef.current.select()
+		}
+	}, [])
+
 	return (
 		<Box py={5}>
 			<label htmlFor='csvFile'>
@@ -199,9 +205,12 @@ export const CreateForm = () => {
 									<Box display='flex' gap={2}>
 										<TextField
 											fullWidth
+											inputRef={inputRef}
 											id={qId}
 											label={`Spørsmål ${qIndex + 1}`}
 											value={question}
+											autoFocus={true}
+											onFocus={(e) => e.target.select()}
 											inputProps={{
 												required: true,
 											}}
@@ -224,10 +233,9 @@ export const CreateForm = () => {
 												step: 1,
 											}}
 											error={hasError(qmsId)}
-											onChange={({ target: { value } }) => {
-												const newMaxScore = parseInt(value) || null
-												handleMaxScoreChange(qIndex, newMaxScore)
-											}}
+											onChange={({ target: { value } }) =>
+												handleMaxScoreChange(qIndex, parseInt(value) || null)
+											}
 										/>
 									</Box>
 									{options.map(({ title, score }, oIndex) => {
@@ -249,7 +257,8 @@ export const CreateForm = () => {
 														label={`Svaralternativ ${oIndex + 1}`}
 														value={title}
 														sx={{ flex: 1 }}
-														autoFocus={oIndex === options.length - 1}
+														autoFocus={oIndex !== 0}
+														onFocus={(e) => e.target.select()}
 														inputProps={{
 															required: true,
 														}}
