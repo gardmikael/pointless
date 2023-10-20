@@ -2,7 +2,7 @@ import { Option, useQuestionStore } from "@/QuestionStore"
 import { Box, Stack, Button, TextField, Paper, IconButton } from "@mui/material"
 import { useRouter } from "next/router"
 import Papa from "papaparse"
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react"
+import { ChangeEvent, useEffect, useRef, useState } from "react"
 import DeleteIcon from "@mui/icons-material/Delete"
 import { getRandomQuestion } from "@/utils/misc"
 
@@ -19,7 +19,8 @@ export const CreateForm = () => {
 	} = useQuestionStore()
 
 	const router = useRouter()
-	const [form, setForm] = useState<HTMLElement | null>(null)
+	const [formIsValid, setFormIsValid] = useState(true)
+	const formRef = useRef<HTMLFormElement | null>(null)
 
 	const handleAddQuestion = () => {
 		const { q, a } = getRandomQuestion()
@@ -131,58 +132,50 @@ export const CreateForm = () => {
 		updateMaxScore(qIndex, newMaxScore)
 	}
 
-	const checkFormValidity = useCallback(() => {
-		const inputs = form?.querySelectorAll("input") || []
+	const checkFormValidity = () => {
+		const isValid = !!formRef?.current?.checkValidity()
+		setFormIsValid(isValid)
+	}
 
-		let isValid = true
+	const hasError = (id: string) => {
+		const element = formRef?.current?.querySelector(
+			`#${id}`
+		) as HTMLInputElement
 
-		inputs.forEach((input) => {
-			if (!input.checkValidity()) {
-				isValid = false
-			}
-		})
-
-		questions.forEach(({ maxScore, options }) => {
-			const highestOptionScore = Math.max(
-				...options.map((option) => option.score)
-			)
-			if (maxScore < highestOptionScore) {
-				isValid = false
-			}
-		})
-
-		return isValid
-	}, [questions, form])
-
-	const formIsValid = useMemo(() => {
-		const isValid = checkFormValidity()
-		return isValid
-	}, [checkFormValidity])
+		return element ? !element.checkValidity() : false
+	}
 
 	useEffect(() => {
-		if (typeof window === "undefined") {
-			return
-		}
-		setForm(document.getElementById("questions"))
-	}, [])
+		checkFormValidity()
+	}, [questions])
 
 	return (
 		<Box py={5}>
-			<form id='questions'>
-				<label htmlFor='csvFile'>
-					<Button variant='outlined' component='span' sx={{ mb: 2 }}>
-						Importer spill
-					</Button>
-					<input
-						type='file'
-						accept='.csv'
-						id='csvFile'
-						style={{ display: "none" }}
-						onChange={handleFileUpload}
-					/>
-				</label>
+			<label htmlFor='csvFile'>
+				<Button variant='outlined' component='span' sx={{ mb: 2 }}>
+					Importer spill
+				</Button>
+				<input
+					type='file'
+					accept='.csv'
+					id='csvFile'
+					style={{ display: "none" }}
+					onChange={handleFileUpload}
+				/>
+			</label>
+			<form
+				id='questions'
+				ref={formRef}
+				noValidate
+				onChange={checkFormValidity}
+			>
 				{questions.map(({ question, options, maxScore }, qIndex) => {
 					const qDisabled = questions.length === 1
+					const minScore = Math.max(
+						...questions[qIndex].options.map(({ score }) => score)
+					)
+					const qId = `q${qIndex}`
+					const qmsId = `qms${qIndex}`
 					return (
 						<Box key={`question_${qIndex}`}>
 							<Paper
@@ -213,13 +206,14 @@ export const CreateForm = () => {
 									<Box display='flex' gap={2}>
 										<TextField
 											fullWidth
+											id={qId}
 											label={`Spørsmål ${qIndex + 1}`}
 											value={question}
 											inputProps={{
 												required: true,
 											}}
-											error={question === ""}
-											helperText={question === "" && "Kan ikke være tom"}
+											error={hasError(qId)}
+											helperText={hasError(qId) && "Kan ikke være tom"}
 											onChange={(e) => {
 												const newQuestion = e.target.value
 												handleQuestionChange(qIndex, newQuestion)
@@ -228,22 +222,16 @@ export const CreateForm = () => {
 										<TextField
 											label='Max score'
 											value={maxScore}
+											id={qmsId}
+											sx={{ minWidth: 100 }}
 											inputProps={{
+												type: "number",
 												max: 100,
-												min: Math.max(
-													...questions[qIndex].options.map(({ score }) => score)
-												),
+												min: minScore,
 												step: 1,
 												pattern: "[0-9]*",
 											}}
-											error={
-												maxScore <
-													Math.max(
-														...questions[qIndex].options.map(
-															({ score }) => score
-														)
-													) || maxScore > 100
-											}
+											error={hasError(qmsId)}
 											onChange={(e) => {
 												const newMaxScore = parseInt(e.target.value || "0", 10)
 												handleMaxScoreChange(qIndex, newMaxScore)
@@ -252,6 +240,9 @@ export const CreateForm = () => {
 									</Box>
 									{options.map(({ title, score }, oIndex) => {
 										const disabled = questions[qIndex].options.length === 1
+										const oid = `o${qIndex}_${oIndex}`
+										const otid = `ot${qIndex}_${oIndex}`
+										const maxScore = questions[qIndex].maxScore
 										return (
 											<Stack key={`q_${qIndex}_option_${oIndex}`} spacing={2}>
 												<Box
@@ -261,6 +252,7 @@ export const CreateForm = () => {
 													sx={{ ml: 2 }}
 												>
 													<TextField
+														id={otid}
 														size='small'
 														label={`Svaralternativ ${oIndex + 1}`}
 														value={title}
@@ -269,8 +261,8 @@ export const CreateForm = () => {
 														inputProps={{
 															required: true,
 														}}
-														error={title === ""}
-														helperText={title === "" && "Kan ikke være tomt"}
+														error={hasError(otid)}
+														helperText={hasError(otid) && "Kan ikke være tom."}
 														onChange={(e) => {
 															const newTitle = e.target.value
 															handleOptionChange(qIndex, oIndex, {
@@ -280,22 +272,18 @@ export const CreateForm = () => {
 														}}
 													/>
 													<TextField
+														id={oid}
 														size='small'
 														label='Score'
 														value={score}
 														inputProps={{
-															max: questions[qIndex].maxScore,
+															max: maxScore,
 															min: 0,
 															pattern: "[0-9]*",
 														}}
-														error={
-															score < 0 || score > questions[qIndex].maxScore
-														}
+														error={hasError(oid)}
 														onChange={(e) => {
-															const newScore = parseInt(
-																e.target.value || "0",
-																10
-															)
+															const newScore = parseInt(e.target.value || "0")
 															if (!isNaN(newScore)) {
 																handleOptionChange(qIndex, oIndex, {
 																	title,

@@ -51,9 +51,10 @@ const PlayPage = () => {
 
 		setTimeout(() => {
 			if (pointless || correctAnswer) {
-				setTargetScore(pointless ? 0 : (correctAnswer as Option).score)
+				const targetScore = pointless ? 0 : (correctAnswer as Option).score
+				setTargetScore(targetScore)
 				setTimerIsRunning(true)
-				startCountdown()
+				startCountdown(targetScore)
 			} else {
 				setCurrentScore(-1)
 				playWrongAudio()
@@ -62,7 +63,12 @@ const PlayPage = () => {
 		}, 3000)
 	}
 
-	const startCountdown = () => {
+	const startCountdown = (targetScore: number) => {
+		if (currentScore === targetScore) {
+			playStopAudio()
+			setShowReset(true)
+			return
+		}
 		playCountdownAudio()
 		intervalRef.current = window.setInterval(() => {
 			decreaseScore()
