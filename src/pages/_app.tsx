@@ -7,7 +7,6 @@ import { CssBaseline } from "@mui/material"
 function MyApp({ Component, pageProps }: AppProps) {
 	return (
 		<ThemeProvider theme={theme}>
-			<CssBaseline />
 			<Component {...pageProps} />
 		</ThemeProvider>
 	)
