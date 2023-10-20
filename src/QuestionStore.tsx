@@ -30,8 +30,8 @@ export const useQuestionStore = create<State>((set) => ({
 	questions: [
 		{
 			question: `Hovedsteder som begynner på bokstaven "B"`,
-			options: [{ title: "Belmopan", score: 11 }],
-			maxScore: 100,
+			options: [{ title: "Belmopan", score: 2 }],
+			maxScore: 30,
 		},
 	],
 	addQuestion: (question: Question) =>
