@@ -75,16 +75,16 @@ html, body {
 
 
 .glow {
-	color: #fff;
+	color: #fff352a5;
 	text-align: center;
 	animation: glow 3s ease-in-out infinite alternate;
 }
   
 @keyframes glow {
 	from {
-	  text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #e6ad00, 0 0 20px #e66f00, 0 0 25px #e6b000, 0 0 30px #e6ad00, 0 0 35px #e6cb00;
+	  text-shadow: 0 0 2px #fff, 0 0 5px #fff, 0 0 7px #e6ad00, 0 0 10px #e66f00, 0 0 12px #e6b000, 0 0 15px #e6ad00c5, 0 0 17px #e6cb009e;
 	}
 	to {
-	  text-shadow: 0 0 10px #fff, 0 0 15px #fcff4d, 0 0 20px #ffe14d, 0 0 25px #ffe74d, 0 0 30px #ffdb4d, 0 0 35px #ffd54d, 0 0 40px #ffd54d;
+	  text-shadow: 0 0 5px #ffffff9d, 0 0 7px #fcff4da1, 0 0 10px #ffe14d91, 0 0 12px #ffe74d9c, 0 0 15px #ffdb4da5, 0 0 17px #ffd54dc9, 0 0 20px #ffd54d8d;
 	}
   }
