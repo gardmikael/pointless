@@ -275,7 +275,7 @@ export const CreateForm = () => {
 														id={oid}
 														size='small'
 														label='Score'
-														value={score || ""}
+														value={score !== null ? score : ""}
 														inputProps={{
 															type: "number",
 															required: true,
