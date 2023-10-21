@@ -3,11 +3,7 @@ import { Box, Stack, Button, TextField, Paper, IconButton } from "@mui/material"
 import { useRouter } from "next/router"
 import { useEffect, useRef, useState } from "react"
 import DeleteIcon from "@mui/icons-material/Delete"
-import {
-	getRandomQuestion,
-	handleFileUpload,
-	handleSaveAsCSV,
-} from "@/utils/misc"
+import { getRandomQuestion, handleSaveAsCSV } from "@/utils/misc"
 import { FileUploader } from "./FileUploader"
 
 export const CreateForm = () => {
