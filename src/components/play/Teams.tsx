@@ -2,6 +2,8 @@ import {
 	Box,
 	Button,
 	IconButton,
+	List,
+	ListItem,
 	Paper,
 	TextField,
 	Typography,
@@ -59,57 +61,58 @@ export const Teams = () => {
 
 	return (
 		<Paper elevation={3} sx={{ p: 3 }}>
-			{teams.map((team, index) => (
-				<Box
-					key={`team-${index}`}
-					sx={{ display: "flex", alignItems: "center" }}
+			<List>
+				{teams.map((team, index) => (
+					<ListItem key={`team-${index}`}>
+						<Box sx={{ display: "flex", alignItems: "center", flex: 1 }}>
+							{index === editIndex ? (
+								<TextField
+									size='small'
+									sx={{ flex: 1 }}
+									value={team.name}
+									onChange={handleTeamNameChange}
+								/>
+							) : (
+								<Typography
+									component='h3'
+									sx={{
+										flex: 1,
+										fontWeight: activeTeamIndex === index ? "bold" : "normal",
+									}}
+								>
+									{team.name}
+								</Typography>
+							)}
+
+							<Typography mr={3} sx={{ color: teamColor(index) }}>
+								{team.scores[qIndex] === -1 ? "-" : team.scores[qIndex]}
+							</Typography>
+							{index === editIndex ? (
+								<IconButton onClick={handleSave}>
+									<CheckCircleIcon color='success' />
+								</IconButton>
+							) : (
+								<IconButton onClick={() => setEditIndex(index)}>
+									<EditIcon />
+								</IconButton>
+							)}
+
+							<IconButton onClick={() => removeTeam(index)}>
+								<DeleteIcon color='error' />
+							</IconButton>
+						</Box>
+					</ListItem>
+				))}
+				<IconButton
+					sx={{ display: "flex", ml: "auto" }}
+					color='success'
+					onClick={() =>
+						addTeam({ name: `Lag ${teams.length + 1}`, scores: [-1] })
+					}
 				>
-					{index === editIndex ? (
-						<TextField
-							size='small'
-							sx={{ flex: 1 }}
-							value={team.name}
-							onChange={handleTeamNameChange}
-						/>
-					) : (
-						<Typography
-							component='h3'
-							sx={{
-								flex: 1,
-								fontWeight: activeTeamIndex === index ? "bold" : "normal",
-							}}
-						>
-							{team.name}
-						</Typography>
-					)}
-
-					<Typography mr={3} sx={{ color: teamColor(index) }}>
-						{team.scores[qIndex] === -1 ? "-" : team.scores[qIndex]}
-					</Typography>
-					{index === editIndex ? (
-						<IconButton onClick={handleSave}>
-							<CheckCircleIcon color='success' />
-						</IconButton>
-					) : (
-						<IconButton onClick={() => setEditIndex(index)}>
-							<EditIcon />
-						</IconButton>
-					)}
-
-					<IconButton onClick={() => removeTeam(index)}>
-						<DeleteIcon color='error' />
-					</IconButton>
-				</Box>
-			))}
-			<IconButton
-				sx={{ display: "flex", ml: "auto" }}
-				color='success'
-				onClick={() =>
-					addTeam({ name: `Lag ${teams.length + 1}`, scores: [-1] })
-				}
-			>
-				<AddCircleIcon />
-			</IconButton>
+					<AddCircleIcon />
+				</IconButton>
+			</List>
 		</Paper>
 	)
 }

@@ -7,6 +7,7 @@ import {
 	IconButton,
 	List,
 	ListItem,
+	ListSubheader,
 	Paper,
 	Stack,
 	TextField,
@@ -147,6 +148,7 @@ const PlayPage = () => {
 		setCurrentScore(maxScore!)
 		setDisableStartButton(false)
 		setAnswer("")
+		setShowAnswers(false)
 	}
 
 	const handleContinue = () => {
@@ -161,6 +163,10 @@ const PlayPage = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [qIndex, activeTeamIndex])
 
+	useEffect(() => {
+		console.log("activeTeamIndex", activeTeamIndex)
+		console.log("qIndex", qIndex)
+	}, [qIndex, activeTeamIndex])
 	return (
 		<>
 			<CenteredFlexBox sx={{ p: 2, width: "100%" }}>
@@ -281,7 +287,11 @@ const PlayPage = () => {
 						{!showAnswers &&
 							activeTeamIndex === teams.length - 1 &&
 							teams[teams.length - 1].scores[qIndex] !== -1 && (
-								<Button variant='outlined' onClick={() => setShowAnswers(true)}>
+								<Button
+									sx={{ my: 2 }}
+									variant='outlined'
+									onClick={() => setShowAnswers(true)}
+								>
 									Vis svar
 								</Button>
 							)}
@@ -293,8 +303,9 @@ const PlayPage = () => {
 									mt: 2,
 								}}
 							>
-								<Typography component='h2'>Svar</Typography>
-								<List>
+								<List
+								//subheader={<ListSubheader>Svar</ListSubheader>}
+								>
 									{questions[qIndex].options
 										.sort((a, b) => b.score! - a.score!)
 										.map(({ title, score }, index) => (
@@ -308,15 +319,14 @@ const PlayPage = () => {
 							</Paper>
 						)}
 
-						<Box display='flex' justifyContent={"center"}>
-							{qIndex !== questions.length - 1 &&
-								activeTeamIndex === teams.length - 1 &&
-								teams[teams.length - 1].scores[qIndex] !== -1 && (
+						<Box display='flex' justifyContent={"center"} sx={{ m: 2 }}>
+							{activeTeamIndex === teams.length - 1 &&
+								teams[activeTeamIndex].scores[qIndex] !== -1 &&
+								qIndex < questions.length - 1 && (
 									<Button
 										variant='contained'
 										color='primary'
 										onClick={handleNextQuestion}
-										disabled={qIndex === questions.length - 1}
 									>
 										Neste spørsmål
 									</Button>
