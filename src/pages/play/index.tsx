@@ -5,6 +5,9 @@ import {
 	Button,
 	Grid,
 	IconButton,
+	List,
+	ListItem,
+	Paper,
 	Stack,
 	TextField,
 	Typography,
@@ -34,6 +37,7 @@ const PlayPage = () => {
 	const [disableStartButton, setDisableStartButton] = useState(false)
 	const [targetScore, setTargetScore] = useState(0)
 	const [showReset, setShowReset] = useState(false)
+	const [showAnswers, setShowAnswers] = useState(false)
 	const [playCountdownAudio, { stop: stopCountdownAudio }] = useSound(
 		"/audio/countdown.mp3"
 	)
@@ -271,17 +275,39 @@ const PlayPage = () => {
 								)}
 							</Box>
 						</Box>
-						<Box
-							width='100%'
-							sx={{
-								display: "grid",
-								gridTemplateColumns: "1fr 1fr 1fr",
-								alignItems: "center",
-							}}
-						></Box>
 					</Grid>
 					<Grid item md={3}>
 						<Teams />
+						{!showAnswers &&
+							activeTeamIndex === teams.length - 1 &&
+							teams[teams.length - 1].scores[qIndex] !== -1 && (
+								<Button variant='outlined' onClick={() => setShowAnswers(true)}>
+									Vis svar
+								</Button>
+							)}
+						{showAnswers && (
+							<Paper
+								elevation={3}
+								sx={{
+									p: 2,
+									mt: 2,
+								}}
+							>
+								<Typography component='h2'>Svar</Typography>
+								<List>
+									{questions[qIndex].options
+										.sort((a, b) => b.score! - a.score!)
+										.map(({ title, score }, index) => (
+											<ListItem key={`q-${qIndex}-option-${index}`}>
+												<Typography variant='caption'>
+													{`${title} (${score})`}
+												</Typography>
+											</ListItem>
+										))}
+								</List>
+							</Paper>
+						)}
+
 						<Box display='flex' justifyContent={"center"}>
 							{qIndex !== questions.length - 1 &&
 								activeTeamIndex === teams.length - 1 &&

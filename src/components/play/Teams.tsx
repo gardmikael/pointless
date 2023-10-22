@@ -1,4 +1,11 @@
-import { Box, Button, IconButton, TextField, Typography } from "@mui/material"
+import {
+	Box,
+	Button,
+	IconButton,
+	Paper,
+	TextField,
+	Typography,
+} from "@mui/material"
 import EditIcon from "@mui/icons-material/Edit"
 import DeleteIcon from "@mui/icons-material/Delete"
 import CheckCircleIcon from "@mui/icons-material/CheckCircle"
@@ -22,8 +29,36 @@ export const Teams = () => {
 		setEditIndex(-1)
 	}
 
+	const teamColor = (index: number) => {
+		if (activeTeamIndex !== teams.length - 1 || teams.length === 1) {
+			return "black"
+		}
+		const scores = teams.map(({ scores }) => scores[qIndex])
+
+		const minScore = Math.min(...scores)
+		const maxScore = Math.max(...scores)
+
+		const minIndexes = [] as number[]
+		const maxIndexes = [] as number[]
+
+		teams.forEach((team, index) => {
+			if (team.scores[qIndex] === minScore) {
+				minIndexes.push(index)
+			}
+			if (team.scores[qIndex] === maxScore) {
+				maxIndexes.push(index)
+			}
+		})
+		if (maxIndexes.includes(index)) {
+			return "red"
+		}
+		if (minIndexes.includes(index)) {
+			return "green"
+		}
+	}
+
 	return (
-		<Box sx={{ border: "3px solid", borderRadius: "10px", p: 3 }}>
+		<Paper elevation={3} sx={{ p: 3 }}>
 			{teams.map((team, index) => (
 				<Box
 					key={`team-${index}`}
@@ -48,7 +83,7 @@ export const Teams = () => {
 						</Typography>
 					)}
 
-					<Typography mr={3}>
+					<Typography mr={3} sx={{ color: teamColor(index) }}>
 						{team.scores[qIndex] === -1 ? "-" : team.scores[qIndex]}
 					</Typography>
 					{index === editIndex ? (
@@ -75,6 +110,6 @@ export const Teams = () => {
 			>
 				<AddCircleIcon />
 			</IconButton>
-		</Box>
+		</Paper>
 	)
 }
