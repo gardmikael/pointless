@@ -1,5 +1,12 @@
 import { create } from "zustand"
 
+const teams = [
+	{
+		name: "Lag 1",
+		scores: [-1],
+	},
+]
+
 export type Option = {
 	title: string
 	score: number | null
@@ -11,8 +18,21 @@ export type Question = {
 	maxScore: number | null
 }
 
+type Team = {
+	name: string
+	scores: number[]
+}
+
 type State = {
 	questions: Question[]
+	qIndex: number
+	setQIndex: (index: number) => void
+	teams: Team[]
+	activeTeamIndex: number
+	updateActiveTeamIndex: (index: number) => void
+	addTeam: (team: Team) => void
+	updateTeam: (teamIndex: number, team: Team) => void
+	removeTeam: (teamIndex: number) => void
 	addQuestion: (question: Question) => void
 	addOption: (questionIndex: number, option: Option) => void
 	updateQuestion: (questionIndex: number, question: string) => void
@@ -34,6 +54,25 @@ export const useQuestionStore = create<State>((set) => ({
 			maxScore: 30,
 		},
 	],
+	qIndex: 0,
+	setQIndex: (index: number) => set((state) => ({ qIndex: index })),
+	teams: teams,
+	activeTeamIndex: 0,
+	updateActiveTeamIndex: (index: number) =>
+		set((state) => ({ activeTeamIndex: index })),
+	addTeam: (team: Team) => set((state) => ({ teams: [...state.teams, team] })),
+	updateTeam: (teamIndex: number, team: Team) =>
+		set((state) => {
+			const teams = [...state.teams]
+			teams[teamIndex] = team
+			return { teams }
+		}),
+	removeTeam: (teamIndex: number) =>
+		set((state) => {
+			const teams = [...state.teams]
+			teams.splice(teamIndex, 1)
+			return { teams }
+		}),
 	addQuestion: (question: Question) =>
 		set((state) => ({
 			questions: [...state.questions, question],
