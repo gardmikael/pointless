@@ -1,9 +1,9 @@
 import {
 	Box,
-	Button,
 	IconButton,
 	List,
 	ListItem,
+	ListSubheader,
 	Paper,
 	TextField,
 	Typography,
@@ -52,16 +52,16 @@ export const Teams = () => {
 			}
 		})
 		if (maxIndexes.includes(index)) {
-			return "red"
+			return "error.main"
 		}
 		if (minIndexes.includes(index)) {
-			return "green"
+			return "success.main"
 		}
 	}
 
 	return (
 		<Paper elevation={3} sx={{ p: 3 }}>
-			<List>
+			<List subheader={<ListSubheader>Lag</ListSubheader>}>
 				{teams.map((team, index) => (
 					<ListItem key={`team-${index}`}>
 						<Box sx={{ display: "flex", alignItems: "center", flex: 1 }}>
@@ -84,7 +84,10 @@ export const Teams = () => {
 								</Typography>
 							)}
 
-							<Typography mr={3} sx={{ color: teamColor(index) }}>
+							<Typography
+								color={teamColor(index)}
+								mr={3} /* sx={{ color: teamColor(index) }} */
+							>
 								{team.scores[qIndex] === -1 ? "-" : team.scores[qIndex]}
 							</Typography>
 							{index === editIndex ? (

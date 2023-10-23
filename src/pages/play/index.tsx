@@ -7,9 +7,7 @@ import {
 	IconButton,
 	List,
 	ListItem,
-	ListSubheader,
 	Paper,
-	Stack,
 	TextField,
 	Typography,
 } from "@mui/material"
@@ -18,6 +16,7 @@ import RefreshIcon from "@mui/icons-material/Refresh"
 import useSound from "use-sound"
 import { useRouter } from "next/router"
 import { Teams } from "@/components/play/Teams"
+import { Countdown } from "@/components/play/Countdown"
 
 const COUNT_DOWN_DURATION = 6700 // 7 seconds
 const PlayPage = () => {
@@ -43,7 +42,7 @@ const PlayPage = () => {
 		"/audio/countdown.mp3"
 	)
 	const [playWrongAudio] = useSound("/audio/wrong.mp3")
-	const [playStopAudio] = useSound("/audio/stop.mp3", { volume: 0.7 })
+	const [playStopAudio] = useSound("/audio/stop.mp3", { volume: 0.5 })
 	const [playPointlessAudio] = useSound("/audio/pointless.mp3")
 	const router = useRouter()
 
@@ -90,10 +89,39 @@ const PlayPage = () => {
 			decreaseScore()
 		}, COUNT_DOWN_DURATION / maxScore!)
 	}
+
 	const setScore = (score: number) => {
 		const team = teams[activeTeamIndex]
 		team.scores[qIndex] = score
 		updateTeam(activeTeamIndex, team)
+	}
+
+	const handleReset = () => {
+		setShowReset(false)
+		setCurrentScore(maxScore!)
+		setDisableStartButton(false)
+		setAnswer("")
+		setShowAnswers(false)
+	}
+
+	const handleContinue = () => {
+		if (activeTeamIndex < teams.length - 1) {
+			updateActiveTeamIndex(activeTeamIndex + 1)
+		}
+	}
+
+	const handleNextQuestion = () => {
+		if (qIndex < questions.length - 1) {
+			teams.forEach((team) => {
+				team.scores.push(-1)
+			})
+			setQIndex(qIndex + 1)
+			updateActiveTeamIndex(0)
+		}
+	}
+
+	const handdleAnswerChange = (event: ChangeEvent<HTMLInputElement>) => {
+		setAnswer(event.target.value)
 	}
 
 	useEffect(() => {
@@ -116,47 +144,6 @@ const PlayPage = () => {
 		setCurrentScore(maxScore!)
 	}, [maxScore])
 
-	const handleNextQuestion = () => {
-		if (qIndex < questions.length - 1) {
-			teams.forEach((team) => {
-				team.scores.push(-1)
-			})
-			setQIndex(qIndex + 1)
-			updateActiveTeamIndex(0)
-		}
-	}
-
-	const handdleAnswerChange = (event: ChangeEvent<HTMLInputElement>) => {
-		setAnswer(event.target.value)
-	}
-
-	useEffect(() => {
-		return () => {
-			clear()
-		}
-	}, [])
-
-	const Point = ({ isLast }: { isLast: boolean }) => (
-		<Box
-			className={`point ${isLast ? "last" : ""} ${
-				timerIsRunning ? "active" : ""
-			}`}
-		/>
-	)
-	const handleReset = () => {
-		setShowReset(false)
-		setCurrentScore(maxScore!)
-		setDisableStartButton(false)
-		setAnswer("")
-		setShowAnswers(false)
-	}
-
-	const handleContinue = () => {
-		if (activeTeamIndex < teams.length - 1) {
-			updateActiveTeamIndex(activeTeamIndex + 1)
-		}
-	}
-
 	useEffect(() => {
 		handleReset()
 		setCurrentScore(questions[qIndex].maxScore!)
@@ -164,77 +151,33 @@ const PlayPage = () => {
 	}, [qIndex, activeTeamIndex])
 
 	useEffect(() => {
-		console.log("activeTeamIndex", activeTeamIndex)
-		console.log("qIndex", qIndex)
-	}, [qIndex, activeTeamIndex])
+		return () => {
+			clear()
+		}
+	}, [])
+
 	return (
 		<>
-			<CenteredFlexBox sx={{ p: 2, width: "100%" }}>
+			<CenteredFlexBox sx={{ p: 2 }}>
 				<Grid container>
 					<Grid item md={3}>
 						<Button
 							variant='outlined'
 							size='small'
+							sx={{ mb: 2 }}
 							onClick={() => router.push("/")}
 						>
 							Tilbake til spørsmål
 						</Button>
 					</Grid>
 					<Grid item md={6}>
-						<Box display='flex' flexDirection='column' alignItems='center'>
-							<Box className='outer-container'>
-								<Box
-									className='inner-container'
-									sx={{ border: "3px solid", mx: 2 }}
-								>
-									<Box
-										sx={{
-											display: "flex",
-											alignItems: "center",
-											justifyContent: "center",
-											border: "2px solid",
-											p: 1,
-											borderRadius: "50%",
-											width: 200,
-											bgcolor: "#323541",
-											m: 1,
-										}}
-									>
-										<Typography
-											variant='h2'
-											sx={{
-												fontWeight: 700,
-												color: `${currentScore === -1 ? "red" : "yellow"}`,
-											}}
-											className={currentScore === 0 ? "glow" : ""}
-										>
-											{currentScore === -1
-												? "X"
-												: currentScore === 0
-												? "POINTLESS"
-												: currentScore}
-										</Typography>
-									</Box>
-									<Stack
-										direction='column-reverse'
-										gap={0.25}
-										height={500}
-										sx={{ mx: 1, alignItems: "center" }}
-									>
-										{Array.from(
-											{
-												length: currentScore === -1 ? maxScore! : currentScore,
-											},
-											(_, i) => (
-												<Point key={i} isLast={i === currentScore - 1} />
-											)
-										)}
-									</Stack>
-								</Box>
-							</Box>
-						</Box>
-						<Box sx={{ textAlign: "center" }}>
-							<Typography variant='caption'>{question}</Typography>
+						<Countdown
+							currentScore={currentScore}
+							maxScore={maxScore!}
+							isRunning={timerIsRunning}
+						/>
+						<Box sx={{ textAlign: "center", my: 2 }}>
+							<Typography variant='h5'>{question}</Typography>
 						</Box>
 						<Box
 							display='flex'
@@ -268,7 +211,7 @@ const PlayPage = () => {
 										variant='contained'
 										onClick={handleStart}
 										disabled={disableStartButton}
-										sx={{ width: 100 }}
+										sx={{ width: 100, mb: 3 }}
 									>
 										Start
 									</Button>
@@ -282,7 +225,7 @@ const PlayPage = () => {
 							</Box>
 						</Box>
 					</Grid>
-					<Grid item md={3}>
+					<Grid item md={3} width={"100%"}>
 						<Teams />
 						{!showAnswers &&
 							activeTeamIndex === teams.length - 1 &&
@@ -303,9 +246,7 @@ const PlayPage = () => {
 									mt: 2,
 								}}
 							>
-								<List
-								//subheader={<ListSubheader>Svar</ListSubheader>}
-								>
+								<List>
 									{questions[qIndex].options
 										.sort((a, b) => b.score! - a.score!)
 										.map(({ title, score }, index) => (

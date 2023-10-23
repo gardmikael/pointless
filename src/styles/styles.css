@@ -1,6 +1,15 @@
+:root {
+	--primary-color: #ff00b8;
+	--secondary-color: #e50c54;
+	--tertiary-color: #f0859d;
+	--bg: rgb(206, 204, 248);
+	--point: linear-gradient(90deg, rgba(159,159,181,1) 0%, rgba(255,255,255,1) 50%, rgba(159,159,181,1) 100%);
+	--active-point: linear-gradient(to right, #ff00b8 0%, #ffa2e0 50%, #ff00b8 100%);
+}
+
 html, body {
 	margin: 0;
-	background-color: rgb(206, 204, 248);
+	background-color: var(--bg);
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
@@ -23,9 +32,9 @@ html, body {
   .point {
 	width: 150px;
 	height: 3px;
-	background-color: rgb(159 159 181);
+	background: var(--point);
 	&.last.active {
-		background: linear-gradient(to right, #ff00b8 0%, #ffa2e0 50%, #ff00b8 100%);
+		background: var(--active-point);
 		animation: scaleDown 0.25s ease-out; 
 	}
 }
@@ -42,13 +51,11 @@ html, body {
 
 .outer-container {
     background: linear-gradient(271deg, #f0859d, #e50c54);
-    background-size: 400% 400%;
-	border-radius: 5px;
-	padding: 3rem;
+	background-size: 400% 400%;
     -webkit-animation: outer-container 50s ease infinite;
     -moz-animation: outer-container 50s ease infinite;
     animation: outer-container 50s ease infinite;
-	box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+	
 }
 
 @keyframes outer-container {
