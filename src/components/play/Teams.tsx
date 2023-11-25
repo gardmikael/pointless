@@ -84,12 +84,20 @@ export const Teams = () => {
 								</Typography>
 							)}
 
-							<Typography
-								color={teamColor(index)}
-								mr={3} /* sx={{ color: teamColor(index) }} */
-							>
+							<Typography color={teamColor(index)} mr={3}>
 								{team.scores[qIndex] === -1 ? "-" : team.scores[qIndex]}
 							</Typography>
+
+							{qIndex > 0 && (
+								<Typography sx={{ fontWeight: "bold" }}>
+									{team.scores.reduce((acc, score) => {
+										if (score >= 0) {
+											return acc + score
+										}
+										return acc
+									}, 0)}
+								</Typography>
+							)}
 							{index === editIndex ? (
 								<IconButton onClick={handleSave}>
 									<CheckCircleIcon color='success' />

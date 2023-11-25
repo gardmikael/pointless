@@ -110,6 +110,15 @@ const PlayPage = () => {
 		}
 	}
 
+	const handlePreviousQuestion = () => {
+		if (qIndex > 0) {
+			teams.forEach((team) => {
+				team.scores.push(-1)
+			})
+			setQIndex(qIndex - 1)
+			updateActiveTeamIndex(0)
+		}
+	}
 	const handleNextQuestion = () => {
 		if (qIndex < questions.length - 1) {
 			teams.forEach((team) => {
@@ -177,6 +186,7 @@ const PlayPage = () => {
 							isRunning={timerIsRunning}
 						/>
 						<Box sx={{ textAlign: "center", my: 2 }}>
+							<Typography>Spørsmål {qIndex + 1}</Typography>
 							<Typography variant='h5'>{question}</Typography>
 						</Box>
 						<Box
@@ -264,13 +274,22 @@ const PlayPage = () => {
 							{activeTeamIndex === teams.length - 1 &&
 								teams[activeTeamIndex].scores[qIndex] !== -1 &&
 								qIndex < questions.length - 1 && (
-									<Button
-										variant='contained'
-										color='primary'
-										onClick={handleNextQuestion}
-									>
-										Neste spørsmål
-									</Button>
+									<Box sx={{ display: "flex", gap: 2 }}>
+										<Button
+											variant='contained'
+											color='primary'
+											onClick={handlePreviousQuestion}
+										>
+											Forrige spørsmål
+										</Button>
+										<Button
+											variant='contained'
+											color='primary'
+											onClick={handleNextQuestion}
+										>
+											Neste spørsmål
+										</Button>
+									</Box>
 								)}
 						</Box>
 					</Grid>
