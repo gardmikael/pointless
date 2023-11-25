@@ -28,10 +28,7 @@ export type Question = {
 export const questions = signal<Question[]>([
 	{
 		question: `Hovedsteder som begynner på bokstaven "B"`,
-		options: [
-			{ title: "Belmopan", score: 2 },
-			{ title: "Berlin", score: 12 },
-		],
+		options: [{ title: "Belmopan", score: 2 }],
 		maxScore: 30,
 	},
 ])

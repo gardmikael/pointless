@@ -78,9 +78,15 @@ const Play = () => {
 		const pointless = answer.at(-1) === " "
 
 		setTimeout(() => {
-			if (pointless || correctAnswer) {
+			if (pointless || !!correctAnswer) {
 				const targetScore = pointless ? 0 : (correctAnswer as Option).score!
 				setTargetScore(targetScore)
+				if (targetScore === questions.value[qIndex.value].maxScore!) {
+					playStopAudio()
+					setShowReset(true)
+					setScore(targetScore)
+					return
+				}
 				setTimerIsRunning(true)
 				startCountdown(targetScore)
 			} else {
