@@ -1,4 +1,3 @@
-import { Option } from "@/QuestionStore"
 import { CenteredFlexBox } from "@/components/CenteredFlexBox"
 import {
 	Box,
@@ -21,7 +20,7 @@ import { Teams } from "@/components/play/Teams"
 import { Countdown } from "@/components/play/Countdown"
 import { mode } from "@/pages"
 import { signal } from "@preact/signals-react"
-import { questions } from "../create/CreateForm"
+import { Option, questions } from "../create/CreateForm"
 import { BackToQuestions } from "./BackToQuestions"
 
 const COUNT_DOWN_DURATION = 6700

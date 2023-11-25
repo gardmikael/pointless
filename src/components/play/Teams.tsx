@@ -13,7 +13,6 @@ import DeleteIcon from "@mui/icons-material/Delete"
 import CheckCircleIcon from "@mui/icons-material/CheckCircle"
 import AddCircleIcon from "@mui/icons-material/AddCircle"
 import { ChangeEvent, useState } from "react"
-import { useQuestionStore } from "@/QuestionStore"
 import { activeTeamIndex, qIndex, teams } from "./Play"
 
 export const Teams = () => {
