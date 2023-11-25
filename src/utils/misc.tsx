@@ -1,4 +1,5 @@
 import { Question, useQuestionStore } from "@/QuestionStore"
+import { questions } from "@/components/create/CreateForm"
 import Papa from "papaparse"
 
 const randomQuestions = [
@@ -47,8 +48,7 @@ export const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
 								options,
 							}
 						})
-
-						useQuestionStore.setState({ questions: importedQuestions })
+						questions.value = importedQuestions
 					}
 				},
 			})

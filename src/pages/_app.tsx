@@ -3,7 +3,6 @@ import "../styles/styles.css"
 import { ThemeProvider } from "@emotion/react"
 import { theme } from "@/styles/theme"
 import { Roboto } from "next/font/google"
-import { Inter } from "next/font/google"
 
 const roboto = Roboto({
 	weight: ["400", "700", "900"],

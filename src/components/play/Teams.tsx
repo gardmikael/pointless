@@ -14,28 +14,48 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle"
 import AddCircleIcon from "@mui/icons-material/AddCircle"
 import { ChangeEvent, useState } from "react"
 import { useQuestionStore } from "@/QuestionStore"
+import { activeTeamIndex, qIndex, teams } from "./Play"
 
 export const Teams = () => {
 	const [editIndex, setEditIndex] = useState(-1)
 
-	const { teams, updateTeam, addTeam, removeTeam, activeTeamIndex, qIndex } =
-		useQuestionStore()
-
 	const handleTeamNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-		const team = teams[editIndex]
-		team.name = e.target.value
-		updateTeam(editIndex, team)
+		const updatedTeams = teams.value.map((team, index) => {
+			if (index === editIndex) {
+				return { ...team, name: e.target.value }
+			}
+			return team
+		})
+		teams.value = updatedTeams
 	}
 
 	const handleSave = () => {
 		setEditIndex(-1)
 	}
 
+	const handleAddTeam = () => {
+		teams.value = [
+			...teams.value,
+			{
+				name: `Lag ${teams.value.length + 1}`,
+				scores: Array(qIndex.value),
+			},
+		]
+	}
+
+	const handleDeleteTeam = (index: number) => {
+		teams.value = teams.value.filter((_, i) => i !== index)
+	}
+
+	const allTeamsHasAnsweredTheCurrentQuestion = teams.value.every(
+		(team) => team.scores[qIndex.value] !== undefined
+	)
+
 	const teamColor = (index: number) => {
-		if (activeTeamIndex !== teams.length - 1 || teams.length === 1) {
+		if (!allTeamsHasAnsweredTheCurrentQuestion) {
 			return "black"
 		}
-		const scores = teams.map(({ scores }) => scores[qIndex])
+		const scores = teams.value.map(({ scores }) => scores[qIndex.value])
 
 		const minScore = Math.min(...scores)
 		const maxScore = Math.max(...scores)
@@ -43,11 +63,11 @@ export const Teams = () => {
 		const minIndexes = [] as number[]
 		const maxIndexes = [] as number[]
 
-		teams.forEach((team, index) => {
-			if (team.scores[qIndex] === minScore) {
+		teams.value.forEach((team, index) => {
+			if (team.scores[qIndex.value] === minScore) {
 				minIndexes.push(index)
 			}
-			if (team.scores[qIndex] === maxScore) {
+			if (team.scores[qIndex.value] === maxScore) {
 				maxIndexes.push(index)
 			}
 		})
@@ -62,7 +82,7 @@ export const Teams = () => {
 	return (
 		<Paper elevation={3} sx={{ p: 3 }}>
 			<List subheader={<ListSubheader>Lag</ListSubheader>}>
-				{teams.map((team, index) => (
+				{teams.value.map((team, index) => (
 					<ListItem key={`team-${index}`}>
 						<Box sx={{ display: "flex", alignItems: "center", flex: 1 }}>
 							{index === editIndex ? (
@@ -77,7 +97,8 @@ export const Teams = () => {
 									component='h3'
 									sx={{
 										flex: 1,
-										fontWeight: activeTeamIndex === index ? "bold" : "normal",
+										fontWeight:
+											activeTeamIndex.value === index ? "bold" : "normal",
 									}}
 								>
 									{team.name}
@@ -85,10 +106,12 @@ export const Teams = () => {
 							)}
 
 							<Typography color={teamColor(index)} mr={3}>
-								{team.scores[qIndex] === -1 ? "-" : team.scores[qIndex]}
+								{team.scores[qIndex.value] === undefined
+									? "-"
+									: team.scores[qIndex.value]}
 							</Typography>
 
-							{qIndex > 0 && (
+							{qIndex.value > 0 && (
 								<Typography sx={{ fontWeight: "bold" }}>
 									{team.scores.reduce((acc, score) => {
 										if (score >= 0) {
@@ -108,7 +131,7 @@ export const Teams = () => {
 								</IconButton>
 							)}
 
-							<IconButton onClick={() => removeTeam(index)}>
+							<IconButton onClick={() => handleDeleteTeam(index)}>
 								<DeleteIcon color='error' />
 							</IconButton>
 						</Box>
@@ -117,9 +140,7 @@ export const Teams = () => {
 				<IconButton
 					sx={{ display: "flex", ml: "auto" }}
 					color='success'
-					onClick={() =>
-						addTeam({ name: `Lag ${teams.length + 1}`, scores: [-1] })
-					}
+					onClick={handleAddTeam}
 				>
 					<AddCircleIcon />
 				</IconButton>
