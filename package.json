@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@types/papaparse": "^5.3.9",
+    "@types/use-sync-external-store": "^0.0.6",
     "mini-css-extract-plugin": "^2.7.6"
   }
 }
