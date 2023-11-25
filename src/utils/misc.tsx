@@ -1,5 +1,4 @@
-import { Question, useQuestionStore } from "@/QuestionStore"
-import { questions } from "@/components/create/CreateForm"
+import { Question, questions } from "@/components/create/CreateForm"
 import Papa from "papaparse"
 
 const randomQuestions = [
