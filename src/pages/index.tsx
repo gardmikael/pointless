@@ -1,7 +1,6 @@
 import Podium from "@/components/Podium"
 import { CreateForm } from "@/components/create/CreateForm"
-import Play, { qIndex } from "@/components/play/Play"
-import { teams } from "@/utils/misc"
+import Play from "@/components/play/Play"
 import { Mode } from "@/utils/types"
 import { signal } from "@preact/signals-react"
 
