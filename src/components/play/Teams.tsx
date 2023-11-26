@@ -126,7 +126,6 @@ export const Teams = () => {
 					</Tooltip>
 				</Box>
 			</List>
-			{JSON.stringify(teams.value)}
 		</Paper>
 	)
 }
