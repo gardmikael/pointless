@@ -14,12 +14,5 @@ const ModeSelector = {
 export const mode = signal<Mode>("create")
 
 export default function Home() {
-	return (
-		<>
-			{ModeSelector[mode.value]}
-			{JSON.stringify(teams.value)}
-			<br />
-			{JSON.stringify(qIndex.value)}
-		</>
-	)
+	return ModeSelector[mode.value]
 }
