@@ -7,7 +7,7 @@ export const Answers = () => {
 			elevation={3}
 			sx={{
 				p: 2,
-				mt: 2,
+				my: 2,
 			}}
 		>
 			<List>
