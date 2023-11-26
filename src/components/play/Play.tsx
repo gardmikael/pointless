@@ -21,22 +21,10 @@ import { Countdown } from "@/components/play/Countdown"
 import { mode } from "@/pages"
 import { signal } from "@preact/signals-react"
 import { BackToQuestions } from "./BackToQuestions"
-import { questions } from "@/utils/misc"
-import { Option } from "@/utils/types"
+import { questions, teams } from "@/utils/misc"
+import { Option, Team } from "@/utils/types"
 
 const COUNT_DOWN_DURATION = 6700
-
-type Team = {
-	name: string
-	scores: number[]
-}
-
-export const teams = signal<Team[]>([
-	{
-		name: "Lag 1",
-		scores: [],
-	},
-])
 
 export const qIndex = signal(0)
 
@@ -53,6 +41,7 @@ const Play = () => {
 	const [targetScore, setTargetScore] = useState(0)
 	const [showReset, setShowReset] = useState(false)
 	const [showAnswers, setShowAnswers] = useState(false)
+
 	const [playCountdownAudio, { stop: stopCountdownAudio }] = useSound(
 		"/audio/countdown.mp3"
 	)
@@ -96,7 +85,7 @@ const Play = () => {
 				setShowReset(true)
 				setScore(questions.value[qIndex.value].maxScore!)
 			}
-		}, 3000)
+		}, 10)
 	}
 
 	const startCountdown = (targetScore: number) => {
@@ -114,14 +103,31 @@ const Play = () => {
 	const setScore = (score: number) => {
 		const updatedTeams = teams.value.map((team, index) => {
 			if (index === activeTeamIndex.value) {
+				// Update the scores for the active team
+				const updatedScores =
+					qIndex.value >= team.scores.length
+						? [...team.scores, [score]] // If the array at qIndex doesn't exist, create a new array
+						: team.scores.map((innerScores, idx) =>
+								idx === qIndex.value ? [...innerScores, score] : innerScores
+						  )
+
 				return {
 					...team,
-					scores: [...team.scores, score],
+					scores: updatedScores,
 				}
 			}
 			return team
 		})
-		teams.value = updatedTeams
+
+		// Update teams.value if the active team index was found
+		if (
+			activeTeamIndex.value !== -1 &&
+			activeTeamIndex.value < updatedTeams.length
+		) {
+			teams.value = updatedTeams
+		} else {
+			console.error("Invalid active team index or team not found.")
+		}
 	}
 
 	const handleReset = () => {
@@ -191,11 +197,15 @@ const Play = () => {
 		(team) => team.scores[qIndex.value] !== undefined
 	)
 
-	const allTeamsHasAnsweredAllQuestions = teams.value.every(
-		(team) => team.scores.length === questions.value.length
-	)
+	const allTeamsHasAnsweredAllQuestions =
+		qIndex.value === questions.value.length - 1 &&
+		allTeamsHasAnsweredTheCurrentQuestion
 
-	const lastQuestion = qIndex.value === questions.value.length - 1
+	const handleNewRound = () => {
+		teams.value = teams.value.reverse()
+		activeTeamIndex.value = 0
+		handleReset()
+	}
 
 	return (
 		<>
@@ -251,12 +261,6 @@ const Play = () => {
 										Start
 									</Button>
 								)}
-
-								{showReset && (
-									<IconButton onClick={handleReset}>
-										<RefreshIcon />
-									</IconButton>
-								)}
 							</Box>
 						</Box>
 					</Grid>
@@ -272,15 +276,32 @@ const Play = () => {
 							/>
 						</FormGroup>
 						{showTeams.value && <Teams />}
-						{!showAnswers && allTeamsHasAnsweredTheCurrentQuestion && (
-							<Button
-								sx={{ my: 2 }}
-								variant='outlined'
-								onClick={() => setShowAnswers(true)}
-							>
-								Vis svar
-							</Button>
-						)}
+						<Box
+							sx={{ display: "flex", justifyContent: "space-between", gap: 2 }}
+						>
+							{!showAnswers &&
+								allTeamsHasAnsweredTheCurrentQuestion &&
+								activeTeamIndex.value === teams.value.length - 1 && (
+									<Button
+										sx={{ my: 2 }}
+										variant='outlined'
+										onClick={() => setShowAnswers(true)}
+									>
+										Vis svar
+									</Button>
+								)}
+							{allTeamsHasAnsweredTheCurrentQuestion &&
+								activeTeamIndex.value === teams.value.length - 1 && (
+									<Button
+										color='success'
+										variant='contained'
+										sx={{ my: 2 }}
+										onClick={handleNewRound}
+									>
+										Ny runde
+									</Button>
+								)}
+						</Box>
 						{showAnswers && (
 							<Paper
 								elevation={3}
@@ -303,8 +324,8 @@ const Play = () => {
 							</Paper>
 						)}
 
-						<Box display='flex' justifyContent={"center"} sx={{ m: 2 }}>
-							{allTeamsHasAnsweredTheCurrentQuestion && !lastQuestion && (
+						{allTeamsHasAnsweredTheCurrentQuestion && (
+							<Box display='flex' justifyContent={"center"} sx={{ m: 2 }}>
 								<Box sx={{ display: "flex", gap: 2 }}>
 									<Button
 										variant='contained'
@@ -318,12 +339,13 @@ const Play = () => {
 										variant='contained'
 										color='primary'
 										onClick={handleNextQuestion}
+										disabled={qIndex.value === questions.value.length - 1}
 									>
 										Neste spørsmål
 									</Button>
 								</Box>
-							)}
-						</Box>
+							</Box>
+						)}
 						{allTeamsHasAnsweredAllQuestions && (
 							<Button
 								onClick={() => {

@@ -1,16 +1,15 @@
 import React, { useEffect } from "react"
 import { motion } from "framer-motion"
-import { teams } from "./play/Play"
 import { Paper, Typography } from "@mui/material"
 import { CenteredFlexBox } from "./CenteredFlexBox"
 import JSConfetti from "js-confetti"
-import { placeInfo } from "@/utils/misc"
+import { placeInfo, teams } from "@/utils/misc"
 
 const Podium = () => {
 	const sortedTeams = teams.value
 		.sort((a, b) => {
-			const aScore = a.scores.reduce((a, b) => a + b, 0)
-			const bScore = b.scores.reduce((a, b) => a + b, 0)
+			const aScore = a.scores.flat().reduce((a, b) => a + b, 0)
+			const bScore = b.scores.flat().reduce((a, b) => a + b, 0)
 			return aScore - bScore
 		})
 		.map((team, index) => ({
@@ -45,7 +44,7 @@ const Podium = () => {
 								{placeInfo[team.place].text} {team.name}
 							</h3>
 							<Typography component='h3' sx={{ fontSize: "2rem" }}>
-								{team.scores.reduce((a, b) => a + b, 0)}
+								{team.scores.flat().reduce((a, b) => a + b, 0)}
 							</Typography>
 						</CenteredFlexBox>
 					</Paper>

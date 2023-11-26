@@ -1,3 +1,5 @@
+export type Mode = "create" | "play" | "podium"
+
 export type PlaceInfo = {
 	[key: number]: {
 		className: string
@@ -20,4 +22,9 @@ export type CountdownProps = {
 	currentScore: number
 	maxScore: number
 	isRunning: boolean
+}
+
+export type Team = {
+	name: string
+	scores: number[][]
 }

@@ -1,9 +1,9 @@
 import Podium from "@/components/Podium"
 import { CreateForm } from "@/components/create/CreateForm"
-import Play from "@/components/play/Play"
+import Play, { qIndex } from "@/components/play/Play"
+import { teams } from "@/utils/misc"
+import { Mode } from "@/utils/types"
 import { signal } from "@preact/signals-react"
-
-type Mode = "create" | "play" | "podium"
 
 const ModeSelector = {
 	create: <CreateForm />,
@@ -14,5 +14,12 @@ const ModeSelector = {
 export const mode = signal<Mode>("create")
 
 export default function Home() {
-	return ModeSelector[mode.value]
+	return (
+		<>
+			{ModeSelector[mode.value]}
+			{JSON.stringify(teams.value)}
+			<br />
+			{JSON.stringify(qIndex.value)}
+		</>
+	)
 }

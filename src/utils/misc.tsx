@@ -1,6 +1,6 @@
 import { signal } from "@preact/signals-react"
 import Papa from "papaparse"
-import { PlaceInfo, Question } from "./types"
+import { PlaceInfo, Question, Team } from "./types"
 
 export const placeInfo: PlaceInfo = {
 	1: { className: "first-place", text: "Førsteplass:" },
@@ -13,6 +13,13 @@ export const questions = signal<Question[]>([
 		question: `Hovedsteder som begynner på bokstaven "B"`,
 		options: [{ title: "Belmopan", score: 2 }],
 		maxScore: 30,
+	},
+])
+
+export const teams = signal<Team[]>([
+	{
+		name: "Lag 1",
+		scores: [],
 	},
 ])
 
