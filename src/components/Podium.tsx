@@ -7,12 +7,14 @@ import JSConfetti from "js-confetti"
 
 const Podium = () => {
 	//get an array of the 3 teams with the overall lowest score
-	const sortedTeams = teams.value.sort((a, b) => {
-		const aScore = a.scores.reduce((a, b) => a + b, 0)
-		const bScore = b.scores.reduce((a, b) => a + b, 0)
-		//return aScore - bScore
-		return bScore - aScore
-	})
+	const sortedTeams = teams.value
+		.sort((a, b) => {
+			const aScore = a.scores.reduce((a, b) => a + b, 0)
+			const bScore = b.scores.reduce((a, b) => a + b, 0)
+			//return aScore - bScore
+			return bScore - aScore
+		})
+		.slice(0, 3)
 
 	const jsConfetti = new JSConfetti()
 
