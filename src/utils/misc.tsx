@@ -1,5 +1,20 @@
-import { Question, questions } from "@/components/create/CreateForm"
+import { signal } from "@preact/signals-react"
 import Papa from "papaparse"
+import { PlaceInfo, Question } from "./types"
+
+export const placeInfo: PlaceInfo = {
+	1: { className: "first-place", text: "Førsteplass:" },
+	2: { className: "second-place", text: "Andreplass:" },
+	3: { className: "third-place", text: "Tredjeplass:" },
+}
+
+export const questions = signal<Question[]>([
+	{
+		question: `Hovedsteder som begynner på bokstaven "B"`,
+		options: [{ title: "Belmopan", score: 2 }],
+		maxScore: 30,
+	},
+])
 
 const randomQuestions = [
 	{ q: "Statsministere i Norge etter krigen", a: "Gerhardsen" },

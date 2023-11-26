@@ -1,10 +1,5 @@
+import { CountdownProps } from "@/utils/types"
 import { Box, Card, Paper, Stack, Typography } from "@mui/material"
-
-type CountdownProps = {
-	currentScore: number
-	maxScore: number
-	isRunning: boolean
-}
 
 export const Countdown = ({
 	currentScore,

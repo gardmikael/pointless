@@ -20,8 +20,9 @@ import { Teams } from "@/components/play/Teams"
 import { Countdown } from "@/components/play/Countdown"
 import { mode } from "@/pages"
 import { signal } from "@preact/signals-react"
-import { Option, questions } from "../create/CreateForm"
 import { BackToQuestions } from "./BackToQuestions"
+import { questions } from "@/utils/misc"
+import { Option } from "@/utils/types"
 
 const COUNT_DOWN_DURATION = 6700
 
@@ -266,7 +267,7 @@ const Play = () => {
 								onChange={() => {
 									showTeams.value = !showTeams.value
 								}}
-								control={<Switch defaultChecked />}
+								control={<Switch />}
 								label={`Vis lag`}
 							/>
 						</FormGroup>

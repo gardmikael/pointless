@@ -9,153 +9,23 @@ import {
 } from "@mui/material"
 import { useEffect, useRef, useState } from "react"
 import DeleteIcon from "@mui/icons-material/Delete"
-import { getRandomQuestion, handleSaveAsCSV } from "@/utils/misc"
+import { handleSaveAsCSV, questions } from "@/utils/misc"
 import { FileUploader } from "./FileUploader"
 import { mode } from "@/pages"
-import { signal } from "@preact/signals-react"
-
-export type Option = {
-	title: string
-	score: number | null
-}
-
-export type Question = {
-	question: string
-	options: Option[]
-	maxScore: number | null
-}
-
-export const questions = signal<Question[]>([
-	{
-		question: `Hovedsteder som begynner på bokstaven "B"`,
-		options: [{ title: "Belmopan", score: 2 }],
-		maxScore: 30,
-	},
-])
+import {
+	handleAddOption,
+	handleAddQuestion,
+	handleMaxScoreChange,
+	handleOptionChange,
+	handleQuestionChange,
+	handleRemoveOption,
+	handleRemoveQuestion,
+} from "@/utils/handlers"
 
 export const CreateForm = () => {
 	const [formIsValid, setFormIsValid] = useState(true)
 	const formRef = useRef<HTMLFormElement | null>(null)
 	const inputRef = useRef<HTMLInputElement | null>(null)
-
-	const handleAddQuestion = () => {
-		const { q, a } = getRandomQuestion()
-		const previousMaxScore =
-			questions.value[questions.value.length - 1].maxScore!
-
-		questions.value = [
-			...questions.value,
-			{
-				question: q,
-				options: [
-					{
-						title: a,
-						score: previousMaxScore,
-					},
-				],
-				maxScore: previousMaxScore,
-			},
-		]
-	}
-
-	const handleAddOption = (index: number) => {
-		const maxScore = questions.value[index].maxScore!
-		const updatedOptions = [
-			...questions.value[index].options,
-			{
-				title: "Nytt svaralternativ",
-				score: maxScore,
-			},
-		]
-		const updatedQuestions = questions.value.map((question, idx) => {
-			if (idx === index) {
-				return {
-					...question,
-					options: updatedOptions,
-				}
-			}
-			return question
-		})
-
-		questions.value = updatedQuestions
-	}
-
-	const handleQuestionChange = (qIndex: number, newQuestion: string) => {
-		const updatedQuestions = questions.value.map((question, index) => {
-			if (index === qIndex) {
-				return {
-					...question,
-					question: newQuestion,
-				}
-			}
-			return question
-		})
-
-		questions.value = updatedQuestions
-	}
-
-	const handleOptionChange = (
-		qIndex: number,
-		oIndex: number,
-		newOption: Option
-	) => {
-		const updatedQuestions = questions.value.map((question, qIdx) => {
-			if (qIdx === qIndex) {
-				const updatedOptions = question.options.map((option, optIdx) => {
-					if (optIdx === oIndex) {
-						return newOption
-					}
-					return option
-				})
-
-				return {
-					...question,
-					options: updatedOptions,
-				}
-			}
-			return question
-		})
-
-		questions.value = updatedQuestions
-	}
-
-	const handleRemoveOption = (qIndex: number, oIndex: number) => {
-		const updatedQuestions = questions.value.map((question, qIdx) => {
-			if (qIdx === qIndex) {
-				const updatedOptions = question.options.filter(
-					(option, optIdx) => optIdx !== oIndex
-				)
-
-				return {
-					...question,
-					options: updatedOptions,
-				}
-			}
-			return question
-		})
-
-		questions.value = updatedQuestions
-	}
-
-	const handleRemoveQuestion = (qIndex: number) => {
-		const updatedQuestions = questions.value.filter(
-			(question, idx) => idx !== qIndex
-		)
-		questions.value = updatedQuestions
-	}
-
-	const handleMaxScoreChange = (qIndex: number, newMaxScore: number | null) => {
-		const updatedQuestions = questions.value.map((question, index) => {
-			if (index === qIndex) {
-				return {
-					...question,
-					maxScore: newMaxScore,
-				}
-			}
-			return question
-		})
-		questions.value = updatedQuestions
-	}
 
 	const checkFormValidity = () => {
 		const isValid = !!formRef?.current?.checkValidity()
