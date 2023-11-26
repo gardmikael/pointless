@@ -40,9 +40,9 @@ const Podium = () => {
 				>
 					<Paper className={placeInfo[team.place].className}>
 						<CenteredFlexBox>
-							<h3>
+							<Typography component='h2'>
 								{placeInfo[team.place].text} {team.name}
-							</h3>
+							</Typography>
 							<Typography component='h3' sx={{ fontSize: "2rem" }}>
 								{team.scores.flat().reduce((a, b) => a + b, 0)}
 							</Typography>

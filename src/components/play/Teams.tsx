@@ -6,6 +6,7 @@ import {
 	ListSubheader,
 	Paper,
 	TextField,
+	Tooltip,
 	Typography,
 } from "@mui/material"
 import EditIcon from "@mui/icons-material/Edit"
@@ -13,8 +14,13 @@ import DeleteIcon from "@mui/icons-material/Delete"
 import CheckCircleIcon from "@mui/icons-material/CheckCircle"
 import AddCircleIcon from "@mui/icons-material/AddCircle"
 import { ChangeEvent, useState } from "react"
-import { activeTeamIndex, qIndex } from "./Play"
-import { teams } from "@/utils/misc"
+import {
+	activeTeamIndex,
+	handleReverseTeams,
+	qIndex,
+	teams,
+} from "@/utils/misc"
+import LoopIcon from "@mui/icons-material/Loop"
 
 export const Teams = () => {
 	const [editIndex, setEditIndex] = useState(-1)
@@ -47,46 +53,6 @@ export const Teams = () => {
 		teams.value = teams.value.filter((_, i) => i !== index)
 	}
 
-	/* const allTeamsHasAnsweredTheCurrentQuestion = teams.value.every(
-		(team) => team.scores[qIndex.value] !== undefined
-	) */
-
-	const allTeamsHasAnsweredTheCurrentQuestion = teams.value.every(
-		(team) =>
-			team.scores[qIndex.value] !== undefined &&
-			team.scores[qIndex.value].length ===
-				teams.value[0].scores[qIndex.value].length
-	)
-
-	const teamColor = (index: number) => {
-		if (
-			!allTeamsHasAnsweredTheCurrentQuestion ||
-			activeTeamIndex.value !== teams.value.length - 1
-		) {
-			return "black"
-		}
-		const scores = teams.value.map(({ scores }) => scores[qIndex.value])
-
-		const totalScores = scores.map((teamScores) =>
-			teamScores.reduce((acc, score) => acc + score, 0)
-		)
-
-		const maxTotalScore = Math.max(...totalScores)
-		const minTotalScore = Math.min(...totalScores)
-
-		const maxIndex = totalScores.indexOf(maxTotalScore)
-		const minIndex = totalScores.indexOf(minTotalScore)
-
-		if (index === maxIndex) {
-			return "error.main" // Team with the highest combined score
-		}
-		if (index === minIndex) {
-			return "success.main" // Team with the lowest combined score
-		}
-
-		return "black" // Default color for other teams
-	}
-
 	return (
 		<Paper elevation={3} sx={{ p: 3 }}>
 			<List subheader={<ListSubheader>Lag</ListSubheader>}>
@@ -113,7 +79,7 @@ export const Teams = () => {
 								</Typography>
 							)}
 
-							<Typography color={teamColor(index)} mr={3}>
+							<Typography mr={3}>
 								{team.scores[qIndex.value] === undefined
 									? "-"
 									: team.scores[qIndex.value].join(", ")}
@@ -145,14 +111,22 @@ export const Teams = () => {
 						</Box>
 					</ListItem>
 				))}
-				<IconButton
-					sx={{ display: "flex", ml: "auto" }}
-					color='success'
-					onClick={handleAddTeam}
-				>
-					<AddCircleIcon />
-				</IconButton>
+				<Box sx={{ display: "flex", alignItems: "center" }}>
+					<IconButton
+						sx={{ display: "flex", ml: "auto" }}
+						color='success'
+						onClick={handleAddTeam}
+					>
+						<AddCircleIcon />
+					</IconButton>
+					<Tooltip title='Reverser rekkefølgen på lagene'>
+						<IconButton onClick={handleReverseTeams}>
+							<LoopIcon />
+						</IconButton>
+					</Tooltip>
+				</Box>
 			</List>
+			{JSON.stringify(teams.value)}
 		</Paper>
 	)
 }

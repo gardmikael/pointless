@@ -1,4 +1,4 @@
-import { signal } from "@preact/signals-react"
+import { computed, signal } from "@preact/signals-react"
 import Papa from "papaparse"
 import { PlaceInfo, Question, Team } from "./types"
 
@@ -7,6 +7,14 @@ export const placeInfo: PlaceInfo = {
 	2: { className: "second-place", text: "Andreplass:" },
 	3: { className: "third-place", text: "Tredjeplass:" },
 }
+
+export const COUNT_DOWN_DURATION = 6700
+
+export const qIndex = signal(0)
+
+export const activeTeamIndex = signal(0)
+
+export const showTeams = signal(true)
 
 export const questions = signal<Question[]>([
 	{
@@ -99,4 +107,42 @@ export const handleSaveAsCSV = (questions: Question[]) => {
 	document.body.appendChild(a)
 	a.click()
 	window.URL.revokeObjectURL(url)
+}
+
+export const allTeamsHasAnsweredTheCurrentQuestion = computed(() =>
+	teams.value.every((team) => {
+		const currentScore = team.scores[qIndex.value]
+
+		// Check if the score exists and is an array
+		if (Array.isArray(currentScore)) {
+			// Check if any other team has a score at qIndex which is not an array or has a different length
+			return teams.value.every((otherTeam) => {
+				const otherScore = otherTeam.scores[qIndex.value]
+				return (
+					Array.isArray(otherScore) && otherScore.length === currentScore.length
+				)
+			})
+		} else {
+			// For non-array scores, check if the score is defined for all teams
+			return currentScore !== undefined
+		}
+	})
+)
+
+export const allTeamsHasAnsweredAllQuestions = computed(
+	() =>
+		qIndex.value === questions.value.length - 1 &&
+		allTeamsHasAnsweredTheCurrentQuestion.value
+)
+
+export const isTheLastTeamOnTheList = computed(
+	() => activeTeamIndex.value === teams.value.length - 1
+)
+
+export const isTheLastQuestion = computed(
+	() => qIndex.value === questions.value.length - 1
+)
+
+export const handleReverseTeams = () => {
+	teams.value = [...teams.value].reverse()
 }

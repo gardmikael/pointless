@@ -5,32 +5,31 @@ import {
 	FormControlLabel,
 	FormGroup,
 	Grid,
-	IconButton,
-	List,
-	ListItem,
-	Paper,
 	Switch,
 	TextField,
 	Typography,
 } from "@mui/material"
 import { ChangeEvent, useEffect, useRef, useState } from "react"
-import RefreshIcon from "@mui/icons-material/Refresh"
 import useSound from "use-sound"
 import { Teams } from "@/components/play/Teams"
 import { Countdown } from "@/components/play/Countdown"
 import { mode } from "@/pages"
-import { signal } from "@preact/signals-react"
 import { BackToQuestions } from "./BackToQuestions"
-import { questions, teams } from "@/utils/misc"
-import { Option, Team } from "@/utils/types"
-
-const COUNT_DOWN_DURATION = 6700
-
-export const qIndex = signal(0)
-
-export const activeTeamIndex = signal(0)
-
-const showTeams = signal(true)
+import {
+	COUNT_DOWN_DURATION,
+	activeTeamIndex,
+	allTeamsHasAnsweredAllQuestions,
+	allTeamsHasAnsweredTheCurrentQuestion,
+	isTheLastTeamOnTheList,
+	qIndex,
+	questions,
+	showTeams,
+	teams,
+} from "@/utils/misc"
+import { Option } from "@/utils/types"
+import { Answers } from "./Answers"
+import { Navigation } from "./Navigation"
+import { handleContinue, setScore } from "@/utils/handlers"
 
 const Play = () => {
 	const [answer, setAnswer] = useState("")
@@ -55,7 +54,7 @@ const Play = () => {
 		window.clearInterval(intervalRef.current as number)
 	}
 
-	const decreaseScore = () => setCurrentScore((prev) => prev! - 1)
+	const decreaseScore = () => setCurrentScore((prev) => prev - 1)
 
 	const handleStart = () => {
 		if (timerIsRunning) {
@@ -85,7 +84,7 @@ const Play = () => {
 				setShowReset(true)
 				setScore(questions.value[qIndex.value].maxScore!)
 			}
-		}, 3000)
+		}, 10)
 	}
 
 	const startCountdown = (targetScore: number) => {
@@ -100,36 +99,6 @@ const Play = () => {
 		}, COUNT_DOWN_DURATION / maxScore!)
 	}
 
-	const setScore = (score: number) => {
-		const updatedTeams = teams.value.map((team, index) => {
-			if (index === activeTeamIndex.value) {
-				// Update the scores for the active team
-				const updatedScores =
-					qIndex.value >= team.scores.length
-						? [...team.scores, [score]] // If the array at qIndex doesn't exist, create a new array
-						: team.scores.map((innerScores, idx) =>
-								idx === qIndex.value ? [...innerScores, score] : innerScores
-						  )
-
-				return {
-					...team,
-					scores: updatedScores,
-				}
-			}
-			return team
-		})
-
-		// Update teams.value if the active team index was found
-		if (
-			activeTeamIndex.value !== -1 &&
-			activeTeamIndex.value < updatedTeams.length
-		) {
-			teams.value = updatedTeams
-		} else {
-			console.error("Invalid active team index or team not found.")
-		}
-	}
-
 	const handleReset = () => {
 		setShowReset(false)
 		setCurrentScore(maxScore!)
@@ -138,27 +107,14 @@ const Play = () => {
 		setShowAnswers(false)
 	}
 
-	const handleContinue = () => {
-		if (activeTeamIndex.value < teams.value.length - 1) {
-			activeTeamIndex.value++
-		}
-	}
-
-	const handlePreviousQuestion = () => {
-		if (qIndex.value > 0) {
-			qIndex.value--
-			activeTeamIndex.value = 0
-		}
-	}
-	const handleNextQuestion = () => {
-		if (qIndex.value < questions.value.length - 1) {
-			qIndex.value++
-			activeTeamIndex.value = 0
-		}
-	}
-
-	const handdleAnswerChange = (event: ChangeEvent<HTMLInputElement>) => {
+	const handleAnswerChange = (event: ChangeEvent<HTMLInputElement>) => {
 		setAnswer(event.target.value)
+	}
+
+	const handleNewRound = () => {
+		teams.value = teams.value.reverse()
+		activeTeamIndex.value = 0
+		handleReset()
 	}
 
 	useEffect(() => {
@@ -193,160 +149,105 @@ const Play = () => {
 		}
 	}, [])
 
-	const allTeamsHasAnsweredTheCurrentQuestion = teams.value.every(
-		(team) => team.scores[qIndex.value] !== undefined
-	)
-
-	const allTeamsHasAnsweredAllQuestions =
-		qIndex.value === questions.value.length - 1 &&
-		allTeamsHasAnsweredTheCurrentQuestion
-
-	const handleNewRound = () => {
-		teams.value = teams.value.reverse()
-		activeTeamIndex.value = 0
-		handleReset()
-	}
-
 	return (
-		<>
-			<CenteredFlexBox sx={{ p: 2 }}>
-				<Grid container>
-					<Grid item md={3}>
-						<BackToQuestions />
-					</Grid>
-					<Grid item md={6}>
-						<Countdown
-							currentScore={currentScore}
-							maxScore={maxScore!}
-							isRunning={timerIsRunning}
+		<CenteredFlexBox sx={{ p: 2 }}>
+			<Grid container>
+				<Grid item md={3}>
+					<BackToQuestions />
+				</Grid>
+				<Grid item md={6}>
+					<Countdown
+						currentScore={currentScore}
+						maxScore={maxScore!}
+						isRunning={timerIsRunning}
+					/>
+					<Box sx={{ textAlign: "center", my: 2 }}>
+						<Typography>Spørsmål {qIndex.value + 1}</Typography>
+						<Typography variant='h5'>{question}</Typography>
+					</Box>
+					<Box
+						display='flex'
+						flexDirection='column'
+						alignItems='center'
+						gap={2}
+					>
+						<TextField
+							onChange={handleAnswerChange}
+							value={answer}
+							autoComplete='off'
+							autoFocus={true}
+							disabled={disableStartButton}
+							sx={{
+								caretColor: "transparent",
+							}}
 						/>
-						<Box sx={{ textAlign: "center", my: 2 }}>
-							<Typography>Spørsmål {qIndex.value + 1}</Typography>
-							<Typography variant='h5'>{question}</Typography>
+						<Box>
+							{showReset ? (
+								<Button
+									variant='contained'
+									color='success'
+									onClick={handleContinue}
+									disabled={isTheLastTeamOnTheList.value}
+								>
+									Fortsett
+								</Button>
+							) : (
+								<Button
+									variant='contained'
+									onClick={handleStart}
+									disabled={disableStartButton}
+									sx={{ width: 100, mb: 3 }}
+								>
+									Start
+								</Button>
+							)}
 						</Box>
-						<Box
-							display='flex'
-							flexDirection='column'
-							alignItems='center'
-							gap={2}
-						>
-							<TextField
-								onChange={handdleAnswerChange}
-								value={answer}
-								autoComplete='off'
-								autoFocus={true}
-								disabled={disableStartButton}
-								sx={{
-									caretColor: "transparent",
-								}}
-							/>
-							<Box>
-								{showReset ? (
-									activeTeamIndex.value !== teams.value.length - 1 && (
-										<Button
-											variant='contained'
-											color='success'
-											onClick={handleContinue}
-										>
-											Fortsett
-										</Button>
-									)
-								) : (
-									<Button
-										variant='contained'
-										onClick={handleStart}
-										disabled={disableStartButton}
-										sx={{ width: 100, mb: 3 }}
-									>
-										Start
-									</Button>
-								)}
-							</Box>
-						</Box>
-					</Grid>
-					<Grid item md={3} width={"100%"}>
-						<FormGroup>
-							<FormControlLabel
-								checked={showTeams.value}
-								onChange={() => {
-									showTeams.value = !showTeams.value
-								}}
-								control={<Switch />}
-								label={`Vis lag`}
-							/>
-						</FormGroup>
-						{showTeams.value && <Teams />}
-						<Box
-							sx={{ display: "flex", justifyContent: "space-between", gap: 2 }}
-						>
-							{!showAnswers &&
-								allTeamsHasAnsweredTheCurrentQuestion &&
-								activeTeamIndex.value === teams.value.length - 1 && (
-									<Button
-										sx={{ my: 2 }}
-										variant='outlined'
-										onClick={() => setShowAnswers(true)}
-									>
-										Vis svar
-									</Button>
-								)}
-							{allTeamsHasAnsweredTheCurrentQuestion &&
-								activeTeamIndex.value === teams.value.length - 1 && (
-									<Button
-										color='success'
-										variant='contained'
-										sx={{ my: 2 }}
-										onClick={handleNewRound}
-									>
-										Ny runde
-									</Button>
-								)}
-						</Box>
-						{showAnswers && (
-							<Paper
-								elevation={3}
-								sx={{
-									p: 2,
-									mt: 2,
-								}}
-							>
-								<List>
-									{questions.value[qIndex.value].options
-										.sort((a, b) => b.score! - a.score!)
-										.map(({ title, score }, index) => (
-											<ListItem key={`q-${qIndex}-option-${index}`}>
-												<Typography variant='caption'>
-													{`${title} (${score})`}
-												</Typography>
-											</ListItem>
-										))}
-								</List>
-							</Paper>
-						)}
+					</Box>
+				</Grid>
+				<Grid item md={3} width={"100%"}>
+					<FormGroup>
+						<FormControlLabel
+							checked={showTeams.value}
+							onChange={() => {
+								showTeams.value = !showTeams.value
+							}}
+							control={<Switch />}
+							label={`Vis lag`}
+						/>
+					</FormGroup>
+					{showTeams.value && <Teams />}
+					<Box
+						sx={{ display: "flex", justifyContent: "space-between", gap: 2 }}
+					>
+						{!showAnswers &&
+							allTeamsHasAnsweredTheCurrentQuestion.value &&
+							isTheLastTeamOnTheList.value && (
+								<Button
+									sx={{ my: 2 }}
+									variant='outlined'
+									onClick={() => setShowAnswers(true)}
+								>
+									Vis svar
+								</Button>
+							)}
+						{allTeamsHasAnsweredTheCurrentQuestion.value &&
+							isTheLastTeamOnTheList.value && (
+								<Button
+									color='success'
+									variant='contained'
+									sx={{ my: 2 }}
+									onClick={handleNewRound}
+								>
+									Ny runde
+								</Button>
+							)}
+					</Box>
+					{showAnswers && <Answers />}
 
-						{allTeamsHasAnsweredTheCurrentQuestion && (
-							<Box display='flex' justifyContent={"center"} sx={{ m: 2 }}>
-								<Box sx={{ display: "flex", gap: 2 }}>
-									<Button
-										variant='contained'
-										color='primary'
-										onClick={handlePreviousQuestion}
-										disabled={qIndex.value === 0}
-									>
-										Forrige spørsmål
-									</Button>
-									<Button
-										variant='contained'
-										color='primary'
-										onClick={handleNextQuestion}
-										disabled={qIndex.value === questions.value.length - 1}
-									>
-										Neste spørsmål
-									</Button>
-								</Box>
-							</Box>
-						)}
-						{allTeamsHasAnsweredAllQuestions && (
+					{allTeamsHasAnsweredTheCurrentQuestion.value &&
+						isTheLastTeamOnTheList.value && <Navigation />}
+					{allTeamsHasAnsweredAllQuestions.value &&
+						isTheLastTeamOnTheList.value && (
 							<Button
 								onClick={() => {
 									mode.value = "podium"
@@ -355,10 +256,9 @@ const Play = () => {
 								Vis podium
 							</Button>
 						)}
-					</Grid>
 				</Grid>
-			</CenteredFlexBox>
-		</>
+			</Grid>
+		</CenteredFlexBox>
 	)
 }
 

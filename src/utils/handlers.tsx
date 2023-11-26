@@ -1,4 +1,10 @@
-import { getRandomQuestion, questions } from "./misc"
+import {
+	activeTeamIndex,
+	getRandomQuestion,
+	qIndex,
+	questions,
+	teams,
+} from "./misc"
 import { Option } from "./types"
 
 export const handleAddQuestion = () => {
@@ -117,4 +123,40 @@ export const handleMaxScoreChange = (
 		return question
 	})
 	questions.value = updatedQuestions
+}
+
+export const handleContinue = () => {
+	if (activeTeamIndex.value < teams.value.length - 1) {
+		activeTeamIndex.value++
+	}
+}
+
+export const setScore = (score: number) => {
+	const updatedTeams = teams.value.map((team, index) => {
+		if (index === activeTeamIndex.value) {
+			// Update the scores for the active team
+			const updatedScores =
+				qIndex.value >= team.scores.length
+					? [...team.scores, [score]] // If the array at qIndex doesn't exist, create a new array
+					: team.scores.map((innerScores, idx) =>
+							idx === qIndex.value ? [...innerScores, score] : innerScores
+					  )
+
+			return {
+				...team,
+				scores: updatedScores,
+			}
+		}
+		return team
+	})
+
+	// Update teams.value if the active team index was found
+	if (
+		activeTeamIndex.value !== -1 &&
+		activeTeamIndex.value < updatedTeams.length
+	) {
+		teams.value = updatedTeams
+	} else {
+		console.error("Invalid active team index or team not found.")
+	}
 }
