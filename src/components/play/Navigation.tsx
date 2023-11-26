@@ -21,25 +21,23 @@ export const Navigation = () => {
 	}
 
 	return (
-		<Box display='flex' justifyContent={"center"} sx={{ m: 2 }}>
-			<Box sx={{ display: "flex", gap: 2 }}>
-				<Button
-					variant='contained'
-					color='primary'
-					onClick={handlePreviousQuestion}
-					disabled={qIndex.value === 0}
-				>
-					Forrige spørsmål
-				</Button>
-				<Button
-					variant='contained'
-					color='primary'
-					onClick={handleNextQuestion}
-					disabled={isTheLastQuestion.value}
-				>
-					Neste spørsmål
-				</Button>
-			</Box>
+		<Box sx={{ display: "flex", justifyContent: "space-between", gap: 2 }}>
+			<Button
+				variant='contained'
+				color='primary'
+				onClick={handlePreviousQuestion}
+				disabled={qIndex.value === 0}
+			>
+				Forrige spørsmål
+			</Button>
+			<Button
+				variant='contained'
+				color='primary'
+				onClick={handleNextQuestion}
+				disabled={isTheLastQuestion.value}
+			>
+				Neste spørsmål
+			</Button>
 		</Box>
 	)
 }
