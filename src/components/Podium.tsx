@@ -17,7 +17,7 @@ const Podium = () => {
 			...team,
 			place: index + 1,
 		}))
-		.slice(-3)
+		.slice(0, 3)
 
 	const jsConfetti = new JSConfetti()
 
