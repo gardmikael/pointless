@@ -128,16 +128,16 @@ body {
 }
 
 .first-place {
-	background-color: gold;
-	padding: 60px;
+	background-color: gold!important;
+	padding: 60px!important;
 }
 
 .second-place {
-	background-color: silver;
-	padding: 40px;
+	background-color: silver!important;
+	padding: 40px!important;
 }
 
 .third-place {
-	background-color: #cd7f32; /* bronze color */
-	padding: 20px;
+	background-color: #cd7f32!important; /* bronze color */
+	padding: 20px!important;
 }

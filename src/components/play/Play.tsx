@@ -85,7 +85,7 @@ const Play = () => {
 				setShowReset(true)
 				setScore(questions.value[qIndex.value].maxScore!)
 			}
-		}, 10)
+		}, 3000)
 	}
 
 	const startCountdown = (targetScore: number) => {
