@@ -65,6 +65,7 @@ export const Teams = () => {
 									sx={{ flex: 1 }}
 									value={team.name}
 									onChange={handleTeamNameChange}
+									autoFocus
 								/>
 							) : (
 								<Typography
