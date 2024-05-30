@@ -1,9 +1,9 @@
+import { qIndex, questions } from "@/utils/misc"
 import { CountdownProps } from "@/utils/types"
 import { Box, Card, Paper, Stack, Typography } from "@mui/material"
 
 export const Countdown = ({
 	currentScore,
-	maxScore,
 	isRunning,
 }: CountdownProps) => {
 	const Point = ({ isLast }: { isLast: boolean }) => (
@@ -11,7 +11,7 @@ export const Countdown = ({
 			className={`point ${isLast ? "last" : ""} ${isRunning ? "active" : ""}`}
 		/>
 	)
-
+	const { maxScore } = questions.value[qIndex.value]
 	return (
 		<Box display='flex' flexDirection='column' alignItems='center'>
 			<Paper className='outer-container'>

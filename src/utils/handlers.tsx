@@ -111,7 +111,7 @@ export const handleRemoveQuestion = (qIndex: number) => {
 
 export const handleMaxScoreChange = (
 	qIndex: number,
-	newMaxScore: number | null
+	newMaxScore: number
 ) => {
 	const updatedQuestions = questions.value.map((question, index) => {
 		if (index === qIndex) {

@@ -9,9 +9,8 @@ import {
 } from "@mui/material"
 import { useEffect, useRef, useState } from "react"
 import DeleteIcon from "@mui/icons-material/Delete"
-import { handleSaveAsCSV, questions } from "@/utils/misc"
+import { Modes, handleSaveAsCSV, mode, questions } from "@/utils/misc"
 import { FileUploader } from "./FileUploader"
-import { mode } from "@/pages"
 import {
 	handleAddOption,
 	handleAddQuestion,
@@ -237,7 +236,7 @@ export const CreateForm = () => {
 							disabled={!formIsValid}
 							onClick={() => {
 								if (formIsValid) {
-									mode.value = "play"
+									mode.value = Modes.Play
 								}
 							}}
 						>

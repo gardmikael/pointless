@@ -5,10 +5,7 @@ export const Answers = () => {
 	return (
 		<Paper
 			elevation={3}
-			sx={{
-				p: 2,
-				my: 2,
-			}}
+			sx={{ p: 2, my: 2 }}
 		>
 			<List>
 				{questions.value[qIndex.value].options

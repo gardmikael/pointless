@@ -2,6 +2,14 @@ import { computed, signal } from "@preact/signals-react"
 import Papa from "papaparse"
 import { PlaceInfo, Question, Team } from "./types"
 
+export enum Modes {
+	Create = "create",
+	Play = "play",
+	Podium = "podium"
+}
+
+export const mode = signal<Modes>(Modes.Create)
+
 export const placeInfo: PlaceInfo = {
 	1: { className: "first-place", text: "Førsteplass:" },
 	2: { className: "second-place", text: "Andreplass:" },
@@ -23,13 +31,12 @@ export const questions = signal<Question[]>([
 		maxScore: 30,
 	},
 ])
+const baseTeam = {
+	name: "Lag 1",
+	scores: [],
+}
 
-export const teams = signal<Team[]>([
-	{
-		name: "Lag 1",
-		scores: [],
-	},
-])
+export const teams = signal<Team[]>([baseTeam])
 
 const randomQuestions = [
 	{ q: "Statsministere i Norge etter krigen", a: "Gerhardsen" },
