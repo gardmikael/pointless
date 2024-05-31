@@ -1,4 +1,5 @@
 import { mode } from "@/pages"
+import { Mode } from "@/utils/types"
 import { Button } from "@mui/material"
 
 export const BackToQuestions = () => {
@@ -7,7 +8,7 @@ export const BackToQuestions = () => {
 			variant='outlined'
 			size='small'
 			sx={{ mb: 2 }}
-			onClick={() => (mode.value = "create")}
+			onClick={() => (mode.value = Mode.Questions)}
 		>
 			Tilbake til spørsmål
 		</Button>

@@ -1,4 +1,8 @@
-export type Mode = "create" | "play" | "podium"
+export enum Mode {
+	Questions = "questions",
+	Play = "play",
+	Podium = "podium",
+}
 
 export type PlaceInfo = {
 	[key: number]: {

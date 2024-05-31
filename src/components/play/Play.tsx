@@ -26,7 +26,7 @@ import {
 	showTeams,
 	teams,
 } from "@/utils/misc"
-import { Option } from "@/utils/types"
+import { Mode, Option } from "@/utils/types"
 import { Answers } from "./Answers"
 import { Navigation } from "./Navigation"
 import { handleContinue, setScore } from "@/utils/handlers"
@@ -250,7 +250,7 @@ const Play = () => {
 						isTheLastTeamOnTheList.value && (
 							<Button
 								onClick={() => {
-									mode.value = "podium"
+									mode.value = Mode.Podium
 								}}
 							>
 								Vis podium

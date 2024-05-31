@@ -21,6 +21,7 @@ import {
 	handleRemoveOption,
 	handleRemoveQuestion,
 } from "@/utils/handlers"
+import { Mode } from "@/utils/types"
 
 export const CreateForm = () => {
 	const [formIsValid, setFormIsValid] = useState(true)
@@ -237,7 +238,7 @@ export const CreateForm = () => {
 							disabled={!formIsValid}
 							onClick={() => {
 								if (formIsValid) {
-									mode.value = "play"
+									mode.value = Mode.Play
 								}
 							}}
 						>
