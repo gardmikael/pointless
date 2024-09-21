@@ -27,8 +27,8 @@ export const Questions = () => {
 				const qId = `q${qIndex}`
 				const qmsId = `qms${qIndex}`
 				return (
-					<Box key={`question_${qIndex}`}>
-						<Paper>
+					<Box key={`question_${qIndex}`} sx={{ mb: 2 }}>
+						<Paper sx={{ p: 4, position: "relative" }}>
 							{!qDisabled && (
 								<Box
 									sx={{
