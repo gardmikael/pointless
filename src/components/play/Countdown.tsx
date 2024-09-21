@@ -1,4 +1,4 @@
-import { CountdownProps } from "@/utils/types"
+import { CountdownProps, Score } from "@/utils/types"
 import { Box, Card, Paper, Stack, Typography } from "@mui/material"
 
 export const Countdown = ({
@@ -11,6 +11,8 @@ export const Countdown = ({
 			className={`point ${isLast ? "last" : ""} ${isRunning ? "active" : ""}`}
 		/>
 	)
+	const isPointless = currentScore === Score.Pointless
+	const isWrong = currentScore === Score.Wrong
 
 	return (
 		<Box display='flex' flexDirection='column' alignItems='center'>
@@ -21,15 +23,11 @@ export const Countdown = ({
 							variant='h2'
 							sx={{
 								fontWeight: 700,
-								color: `${currentScore === -1 ? "red" : "yellow"}`,
+								color: `${isWrong ? "red" : "yellow"}`,
 							}}
-							className={currentScore === 0 ? "glow" : ""}
+							className={isPointless ? "glow" : ""}
 						>
-							{currentScore === -1
-								? "X"
-								: currentScore === 0
-								? "POINTLESS"
-								: currentScore}
+							{isWrong ? "X" : isPointless ? "POINTLESS" : currentScore}
 						</Typography>
 					</Card>
 					<Stack
@@ -40,7 +38,7 @@ export const Countdown = ({
 					>
 						{Array.from(
 							{
-								length: currentScore === -1 ? maxScore! : currentScore,
+								length: isWrong ? maxScore : currentScore,
 							},
 							(_, i) => (
 								<Point key={i} isLast={i === currentScore - 1} />
