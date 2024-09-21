@@ -1,3 +1,4 @@
+import { grey, red } from "@mui/material/colors"
 import { createTheme } from "@mui/material/styles"
 
 /* declare module "@mui/material/styles/createPalette" {
@@ -39,6 +40,13 @@ export const theme = createTheme({
 		MuiButton: {
 			defaultProps: {
 				variant: "contained",
+			},
+		},
+		MuiSvgIcon: {
+			styleOverrides: {
+				root: {
+					color: "inherit",
+				},
 			},
 		},
 		MuiCard: {
