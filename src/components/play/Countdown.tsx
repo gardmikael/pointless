@@ -22,8 +22,8 @@ export const Countdown = ({
 
 	return (
 		<Box display='flex' flexDirection='column' alignItems='center' p={2}>
-			<Paper className={countdownStyles.outerContainer} sx={{ px: 5, py: 2 }}>
-				<Paper className={countdownStyles.innerContainer} sx={{ mx: 2 }}>
+			<Paper variant='countdown1' sx={{ px: 5, py: 2 }}>
+				<Paper variant='countdown2' sx={{ mx: 2 }}>
 					<Card
 						sx={{
 							display: "flex",
