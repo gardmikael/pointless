@@ -23,9 +23,8 @@ export function PlayProvider({
 	const [qIndex, setQIndex] = useState(0)
 	const [activeTeamIndex, setActiveTeamIndex] = useState(0)
 	const [answer, setAnswer] = useState("")
-	const { teams, addNewQuestionArrayForAllTeams, handleTeamScoreChange } =
-		useTeams()
-	const { question, maxScore, options } = questions[qIndex]
+	const { teams, handleTeamScoreChange } = useTeams()
+	const { maxScore, options } = questions[qIndex]
 
 	const onFinish = useCallback(
 		(score: number) => {
@@ -53,7 +52,8 @@ export function PlayProvider({
 	const handleNextQuestion = () => {
 		setActiveTeamIndex(0)
 		setQIndex((prev) => prev + 1)
-		addNewQuestionArrayForAllTeams()
+		resetAnswer()
+		handleReset()
 	}
 
 	const handleAnswerChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -63,9 +63,12 @@ export function PlayProvider({
 	const handleNextTeam = () => {
 		if (activeTeamIndex === teams.length - 1) {
 			setActiveTeamIndex(0)
+			handleReset()
 			return
 		}
 		setActiveTeamIndex((prev) => prev + 1)
+		resetAnswer()
+		handleReset()
 	}
 
 	const resetAnswer = () => {
@@ -76,8 +79,8 @@ export function PlayProvider({
 		() =>
 			teams.every(
 				(team) =>
-					team.scores.every((s) => s.length > 0) &&
-					team.scores.length === questions.length
+					team.scores.length === questions.length &&
+					team.scores.every((s) => typeof s === "number")
 			),
 		[teams, questions]
 	)
@@ -90,16 +93,11 @@ export function PlayProvider({
 		if (teams.length === 0) {
 			return false
 		}
-		const firstTeamScoresLength = teams[0].scores[qIndex]?.length || 0
 		return (
-			activeTeamIndex === teams.length - 1 &&
-			teams.every(
-				(team) =>
-					team.scores[qIndex]?.length > 0 &&
-					team.scores[qIndex].length === firstTeamScoresLength
-			)
+			isTheLastTeamOnTheList &&
+			teams.every((team) => typeof team.scores[qIndex] === "number")
 		)
-	}, [teams, qIndex, activeTeamIndex])
+	}, [teams, qIndex, isTheLastTeamOnTheList])
 
 	const isTheLastQuestionForTheLastTeam =
 		qIndex === questions.length - 1 && isTheLastTeamOnTheList

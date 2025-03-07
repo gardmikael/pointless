@@ -1,3 +1,5 @@
+"use client"
+
 import { Team, TeamsContextType } from "@/utils/types"
 import {
 	ChangeEvent,
@@ -33,48 +35,29 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
 		})
 	}
 
-	const addNewQuestionArrayForAllTeams = useCallback(() => {
-		// add a new array to each team
-		setTeams((prevTeams) => {
-			const updatedTeams = prevTeams.map((team) => ({
-				...team,
-				scores: [...team.scores, []],
-			}))
-			return updatedTeams
-		})
-	}, [])
-
 	const handleTeamScoreChange = useCallback(
 		(teamIndex: number, scoreIndex: number, value: number) => {
 			setTeams((prevTeams) => {
-				// Make a copy of the previous teams array to avoid mutating state directly
 				const updatedTeams = [...prevTeams]
 
-				// Ensure that the teamIndex is valid
 				if (teamIndex >= 0 && teamIndex < updatedTeams.length) {
-					// Ensure that the scoreIndex is valid
-					if (
-						scoreIndex >= 0 &&
-						scoreIndex < updatedTeams[teamIndex].scores.length
-					) {
-						// Update the score at the specified scoreIndex for the team at teamIndex
-						// push the new score to the array
-						updatedTeams[teamIndex].scores[scoreIndex].push(value)
-
-						// Return the modified teams array to update the state
-						return updatedTeams
-					} else {
-						console.error(`Invalid scoreIndex: ${scoreIndex}`)
+					// Oppdater scores array for det aktuelle laget
+					updatedTeams[teamIndex] = {
+						...updatedTeams[teamIndex],
+						scores: [
+							...updatedTeams[teamIndex].scores.slice(0, scoreIndex),
+							value,
+							...updatedTeams[teamIndex].scores.slice(scoreIndex + 1),
+						],
 					}
+					return updatedTeams
 				} else {
-					console.error(`Invalid teamIndex: ${teamIndex}`)
+					console.error(`Ugyldig teamIndex: ${teamIndex}`)
+					return prevTeams
 				}
-
-				// If indices are invalid, return the previous state unchanged
-				return prevTeams
 			})
 		},
-		[setTeams] // Only depend on setTeams
+		[setTeams]
 	)
 
 	const addTeam = () => {
@@ -108,7 +91,6 @@ export function TeamsProvider({ children }: { children: ReactNode }) {
 				deleteTeam,
 				reverseTeamOrder,
 				handleTeamScoreChange,
-				addNewQuestionArrayForAllTeams,
 			}}
 		>
 			{children}
@@ -120,7 +102,7 @@ export function useTeams(): TeamsContextType {
 	const context = useContext(TeamsContext)
 
 	if (context === undefined) {
-		throw new Error("useApp must be used inside an AppProvider")
+		throw new Error("useTeams must be used inside an TeamsProvider")
 	}
 	return context as TeamsContextType
 }

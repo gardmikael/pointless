@@ -1,3 +1,5 @@
+"use client"
+
 import { AppContextType, Mode } from "@/utils/types"
 import { ReactNode, createContext, useContext, useState } from "react"
 

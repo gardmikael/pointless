@@ -14,7 +14,7 @@ export enum Mode {
 
 export type Team = {
 	name: string
-	scores: number[][]
+	scores: Array<number>
 }
 
 export type Option = {
@@ -94,7 +94,6 @@ export type TeamsContextType = {
 		scoreIndex: number,
 		value: number
 	) => void
-	addNewQuestionArrayForAllTeams: () => void
 }
 
 export type PlayContextType = {

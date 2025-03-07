@@ -1,5 +1,7 @@
 import { CountdownProps, Score } from "@/utils/types"
 import { Box, Card, Paper, Stack, Typography } from "@mui/material"
+import countdownStyles from "./style/countdown.module.css"
+import clsx from "clsx"
 
 export const Countdown = ({
 	currentScore,
@@ -8,24 +10,40 @@ export const Countdown = ({
 }: CountdownProps) => {
 	const Point = ({ isLast }: { isLast: boolean }) => (
 		<Box
-			className={`point ${isLast ? "last" : ""} ${isRunning ? "active" : ""}`}
+			className={clsx(
+				countdownStyles.point,
+				isLast && countdownStyles.last,
+				isRunning && countdownStyles.active
+			)}
 		/>
 	)
 	const isPointless = currentScore === Score.Pointless
 	const isWrong = currentScore === Score.Wrong
 
 	return (
-		<Box display='flex' flexDirection='column' alignItems='center'>
-			<Paper className='outer-container'>
-				<Paper className='inner-container' sx={{ mx: 2 }}>
-					<Card className='current-score'>
+		<Box display='flex' flexDirection='column' alignItems='center' p={2}>
+			<Paper className={countdownStyles.outerContainer} sx={{ px: 5, py: 2 }}>
+				<Paper className={countdownStyles.innerContainer} sx={{ mx: 2 }}>
+					<Card
+						sx={{
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "center",
+							padding: ".5rem",
+							borderRadius: "50%",
+							width: 200,
+							backgroundColor: "#323541",
+							margin: ".5rem",
+							overflow: "visible",
+						}}
+					>
 						<Typography
 							variant='h2'
 							sx={{
 								fontWeight: 700,
 								color: `${isWrong ? "red" : "yellow"}`,
 							}}
-							className={isPointless ? "glow" : ""}
+							className={clsx(isPointless && countdownStyles.glow)}
 						>
 							{isWrong ? "X" : isPointless ? "POINTLESS" : currentScore}
 						</Typography>

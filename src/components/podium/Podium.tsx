@@ -1,15 +1,16 @@
 import React, { useEffect } from "react"
 import { motion } from "framer-motion"
 import { Paper, Typography } from "@mui/material"
-import { CenteredFlexBox } from "./CenteredFlexBox"
+import { CenteredFlexBox } from "../CenteredFlexBox"
 import JSConfetti from "js-confetti"
-import { useTeams } from "../context/TeamsContext"
+import { useTeams } from "../../context/TeamsContext"
 import { PlaceInfo } from "@/utils/types"
+import podiumStyles from "./style/podium.module.css"
 
 const placeInfo: PlaceInfo = [
-	{ className: "first-place", text: "Førsteplass:" },
-	{ className: "second-place", text: "Andreplass:" },
-	{ className: "third-place", text: "Tredjeplass:" },
+	{ className: podiumStyles.firstPlace, text: "Førsteplass:" },
+	{ className: podiumStyles.secondPlace, text: "Andreplass:" },
+	{ className: podiumStyles.thirdPlace, text: "Tredjeplass:" },
 ]
 
 const Podium = () => {
@@ -38,7 +39,7 @@ const Podium = () => {
 	}, [])
 
 	return (
-		<div className='podium'>
+		<div className={podiumStyles.podium}>
 			{sortedTeams.reverse().map(({ place, name, scores }, index) => (
 				<motion.div
 					key={name}

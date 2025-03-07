@@ -1,0 +1,89 @@
+.outerContainer {
+	background: linear-gradient(271deg, #f0859d, #e50c54);
+	background-size: 400% 400%;
+	-webkit-animation: outer-container 50s ease infinite;
+	-moz-animation: outer-container 50s ease infinite;
+	animation: outer-container 50s ease infinite;
+}
+
+@keyframes outer-container {
+	0% {
+		background-position: 51% 0%;
+	}
+	50% {
+		background-position: 50% 100%;
+	}
+	100% {
+		background-position: 51% 0%;
+	}
+}
+
+.innerContainer {
+	background: linear-gradient(0deg, #11125d, #1716df);
+	background-size: 400% 400%;
+	padding: 0.5rem;
+	-webkit-animation: inner-container 11s ease infinite;
+	-moz-animation: inner-container 11s ease infinite;
+	animation: inner-container 11s ease infinite;
+}
+
+@keyframes inner-container {
+	0% {
+		background-position: 50% 0%;
+	}
+	50% {
+		background-position: 51% 100%;
+	}
+	100% {
+		background-position: 50% 0%;
+	}
+}
+
+.glow {
+	color: #fff352a5;
+	text-align: center;
+	animation: glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+	from {
+		text-shadow: 0 0 2px #fff, 0 0 5px #fff, 0 0 7px #e6ad00, 0 0 10px #e66f00,
+			0 0 12px #e6b000, 0 0 15px #e6ad00c5, 0 0 17px #e6cb009e;
+	}
+	to {
+		text-shadow: 0 0 5px #ffffff9d, 0 0 7px #fcff4da1, 0 0 10px #ffe14d91,
+			0 0 12px #ffe74d9c, 0 0 15px #ffdb4da5, 0 0 17px #ffd54dc9,
+			0 0 20px #ffd54d8d;
+	}
+}
+
+.point {
+	width: 150px;
+	height: 3px;
+	background: linear-gradient(
+		90deg,
+		rgba(159, 159, 181, 1) 0%,
+		rgba(255, 255, 255, 1) 50%,
+		rgba(159, 159, 181, 1) 100%
+	);
+}
+
+.point.last.active {
+	background: linear-gradient(
+		to right,
+		#ff00b8 0%,
+		#ffa2e0 50%,
+		#ff00b8 100%
+	);
+	animation: scaleDown 0.25s ease-out;
+}
+
+@keyframes scaleDown {
+	from {
+		transform: scale(1);
+	}
+	to {
+		transform: scale(1.2);
+	}
+}
+  

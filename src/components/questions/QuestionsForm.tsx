@@ -1,5 +1,6 @@
+"use client"
 import { Box, Container } from "@mui/material"
-import { Mode, Question } from "@/utils/types"
+import { Mode } from "@/utils/types"
 import { useApp } from "../../context/AppContext"
 import { useQuestions } from "@/context/QuestionFormContext"
 import { FileImporter } from "./FileImporter"
@@ -7,11 +8,7 @@ import { Questions } from "./Questions"
 import { useEffect } from "react"
 import { ButtonPanel } from "./ButtonPanel"
 
-type QuestionsProps = {
-	callback?: (questions: Question[]) => void
-}
-
-export const QuestionsForm = ({ callback = () => {} }: QuestionsProps = {}) => {
+export function QuestionsForm() {
 	const {
 		questions,
 		formRef,
@@ -21,9 +18,8 @@ export const QuestionsForm = ({ callback = () => {} }: QuestionsProps = {}) => {
 	} = useQuestions()
 	const { setMode } = useApp()
 
-	const onComplete = () => {
+	const handleComplete = () => {
 		if (formIsValid) {
-			callback(questions)
 			setMode(Mode.Teams)
 		}
 	}
@@ -43,7 +39,7 @@ export const QuestionsForm = ({ callback = () => {} }: QuestionsProps = {}) => {
 					onChange={checkFormValidity}
 				>
 					<Questions />
-					<ButtonPanel onComplete={onComplete} />
+					<ButtonPanel onComplete={handleComplete} />
 				</form>
 			</Box>
 		</Container>

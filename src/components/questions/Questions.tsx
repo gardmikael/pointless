@@ -1,8 +1,10 @@
-import { Box, Button, IconButton, Paper, Stack, TextField } from "@mui/material"
-import DeleteIcon from "@mui/icons-material/Delete"
+import { Box, Button, Paper, Stack } from "@mui/material"
 import { useRef } from "react"
 import { Option } from "./Option"
 import { useQuestions } from "@/context/QuestionFormContext"
+import { DeleteButton } from "./DeleteButton"
+import { QuestionField } from "./QuestionField"
+import { MaxScoreField } from "./MaxScoreField"
 
 export const Questions = () => {
 	const {
@@ -26,62 +28,29 @@ export const Questions = () => {
 				)
 				const qId = `q${qIndex}`
 				const qmsId = `qms${qIndex}`
+
 				return (
 					<Box key={`question_${qIndex}`} sx={{ mb: 2 }}>
 						<Paper sx={{ p: 4, position: "relative" }}>
 							{!qDisabled && (
-								<Box
-									sx={{
-										position: "absolute",
-										top: "-10px",
-										right: "-10px",
-									}}
-								>
-									<IconButton
-										className='delete-btn'
-										onClick={() => handleRemoveQuestion(qIndex)}
-										color='error'
-									>
-										<DeleteIcon />
-									</IconButton>
-								</Box>
+								<DeleteButton onDelete={() => handleRemoveQuestion(qIndex)} />
 							)}
-
 							<Stack spacing={3}>
 								<Box display='flex' gap={2}>
-									<TextField
-										fullWidth
+									<QuestionField
 										id={qId}
+										question={question}
+										index={qIndex}
 										inputRef={inputRef}
-										label={`Spørsmål ${qIndex + 1}`}
-										value={question}
-										autoFocus={true}
-										onFocus={(e) => e.target.select()}
-										inputProps={{
-											required: true,
-										}}
-										error={hasError(qId)}
-										helperText={hasError(qId) && "Kan ikke være tom"}
-										onChange={({ target: { value } }) =>
-											handleQuestionChange(qIndex, value)
-										}
+										hasError={hasError}
+										onChange={(value) => handleQuestionChange(qIndex, value)}
 									/>
-									<TextField
+									<MaxScoreField
 										id={qmsId}
-										label='Max score'
-										value={maxScore !== null ? maxScore : ""}
-										sx={{ minWidth: 100 }}
-										inputProps={{
-											type: "number",
-											max: 100,
-											min: minScore,
-											required: true,
-											step: 1,
-										}}
-										error={hasError(qmsId)}
-										onChange={({ target: { value } }) => {
-											handleMaxScoreChange(qIndex, parseInt(value))
-										}}
+										maxScore={maxScore}
+										minScore={minScore}
+										hasError={hasError}
+										onChange={(value) => handleMaxScoreChange(qIndex, value)}
 									/>
 								</Box>
 								{options.map(({ title, score }, oIndex) => (

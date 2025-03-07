@@ -1,22 +1,11 @@
-import { grey, red } from "@mui/material/colors"
 import { createTheme } from "@mui/material/styles"
 
-/* declare module "@mui/material/styles/createPalette" {
-	interface Palette {
-		custom: Palette["primary"]
-	}
-	interface PaletteOptions {
-		custom?: PaletteOptions["primary"]
-	}
-} */
-
-/* const customColors = {
-	mintCream: "#F6FBFB",
-	spanishGray: "#9E9E9E",
-	silverSand: "#C4C4C4",
-} */
-
 export const theme = createTheme({
+	palette: {
+		background: {
+			default: "rgb(206, 204, 248)",
+		},
+	},
 	components: {
 		MuiPaper: {
 			defaultProps: {
@@ -46,23 +35,6 @@ export const theme = createTheme({
 			styleOverrides: {
 				root: {
 					color: "inherit",
-				},
-			},
-		},
-		MuiCard: {
-			styleOverrides: {
-				root: {
-					"&.current-score": {
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						padding: ".5rem",
-						borderRadius: "50%",
-						width: 200,
-						backgroundColor: "#323541",
-						margin: ".5rem",
-						overflow: "visible",
-					},
 				},
 			},
 		},

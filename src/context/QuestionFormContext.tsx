@@ -1,3 +1,5 @@
+"use client"
+
 import { useQuestionForm } from "@/hooks/useQuestionForm"
 import { QuestionFormContextType } from "@/utils/types"
 import { ReactNode, createContext, useContext } from "react"
